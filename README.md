@@ -9,18 +9,18 @@ Features:
 ** Comments on each blog, with SMF BBCode
 * Recent blogs list
 * Game posts
-** Thumbnails for use in game lists
-** Description of game with SMF BBCode
-** Game title/genre/type (game/example)
-** Single download link
-** Per-game comments with SMF BBCode
+ * Thumbnails for use in game lists
+ * Description of game with SMF BBCode
+ * Game title/genre/type (game/example)
+ * Single download link
+ * Per-game comments with SMF BBCode
 * Recent games window on front page
 
 Planned features:
 * More game features
-** Multiple download links
-** Screenshots with thumbnails
-** Rating system
+ * Multiple download links
+ * Screenshots with thumbnails
+ * Rating system
 * Badge system
 
 Broken/Missing features:
