@@ -1,0 +1,112 @@
+<?php
+require_once('common.php');
+require_once('fuck_php.php');
+
+// The panels to the left remain constant; load info for those here
+
+$selblog = null;
+$blog_id = !empty($_GET['blog']) ? $_GET['blog'] : -1;
+$member_id = !empty($_GET['u']) ? $_GET['u'] : (!empty($_GET['user']) ? $_GET['user'] : 
+             ($context['user']['is_guest'] ? 1 : $user_info['id']));
+if ($blog_id != -1) {
+  $smcFunc['db_select_db']("enigma_forums");
+  $blog_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_blog={int:bid}', array("bid"=>$blog_id));
+  $selblog = mysql_fetch_assoc($blog_query);
+  if ($selblog !== false)
+    $member_id = $selblog['id_author'];
+  else
+    $selblog = null;
+}
+
+$lmd = loadMemberData(array($member_id));
+if ($lmd === false) echo "Failed to load member data";
+//$member = $user_profile[$member_id];
+
+$lmc = loadMemberContext($lmd[0]);
+$member = $memberContext[$lmd[0]];
+
+echo "<div class=\"edcpanes_left\">\n";
+include('panel_member.php');
+include('panel_activeusers.php');
+echo "</div>\n";
+
+echo "<div class=\"edcmainpane\">
+  <center><a href=\"blogs.php?u=" . $member_id . "\"><img alt=\"Banner\" src=\"" . (empty($member['banner']) ? "images/ENIGMA_Banner_Default.png" : $member['banner']) . "\" /></a></center>\n";
+
+// Now we do the action-specific part
+$action = !empty($_GET['action']) ? $_GET['action'] : "viewall";
+
+switch ($action)
+{
+  case "viewall":
+      echo "  <script language=\"JavaScript\" src=\"script/edit.js\"></script>\n";
+      $smcFunc['db_select_db']("enigma_forums");
+      $comments_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_author={int:aid} ORDER BY id_blog DESC LIMIT 10', array("aid"=>$member_id));
+      $hadblogs = false;
+      while (($blog = mysql_fetch_assoc($comments_query)) !== false)
+      {
+        $hadblogs = true;
+        echo "  <div class=\"edcBlog\">";
+        echo "<h1 class=\"edcBlogTitle\">" . htmlspecialchars($blog['title']) . "</h1><span class=\"edcBlogDate\">Posted on " . $blog['date'] . "</span><hr>";
+        echo parse_bbc(htmlspecialchars($blog['text'])) . "\n    <div class=\"edcBlogOptions\">";
+        if (!$context['user']['is_guest'] && ($context['user']['id'] == $blog['id_author']))
+          echo "<a href=\"blogs.php?action=edit&blog=" . $blog['id_blog'] . "\">Edit</a> | " .
+               "<a href=\"submit.php?action=delblog&blog=" . $blog['id_blog'] . "\" onclick=\"javascript:return confirmDelete('blog')\">Delete</a> | ";
+        $ccount_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_thread={int:tid}', array("tid"=>$blog['id_thread']));
+        $cc = mysql_num_rows($ccount_query);
+        echo "<a href=\"blogs.php?action=comments&blog=" . $blog['id_blog'] . "\">Comments" . (empty($cc)?"":" (".$cc.")"). "</a>";
+        echo "</div></div>";
+      }
+      if (!$hadblogs)
+        echo "<div class=\"edcBlog\">" . $member['name'] . " has not posted any blogs yet.</div>\n";
+    break;
+  case "comments":
+      echo "<div class=\"edcBlog\">\n";
+      if ($selblog == null) {
+        echo "  <h1>ERROR: No blog selected</h1>\n</div>";
+        break;
+      }
+      echo "<h1 class=\"edcBlogTitle\">" . htmlspecialchars($selblog['title']) . "</h1><span class=\"edcBlogDate\">Posted on " . $selblog['date'] . "</span><hr>";
+      echo parse_bbc(htmlspecialchars($selblog['text'])) . "\n    <div class=\"edcBlogOptions\">";
+        if (!$context['user']['is_guest'] && ($context['user']['id'] == $selblog['id_author']))
+          echo "<a href=\"blogs.php?action=edit&blog=" . $selblog['id_blog'] . "\">Edit</a> | " .
+               "<a href=\"#\">Delete</a>";
+        echo "</div>";
+      echo "</div>";
+      $thread_id = $selblog['id_thread'];
+      include('panel_comments.php');
+    break;
+  case "new":
+      echo "<div class=\"edcBlog\">\n";
+      echo "<form method=\"post\" action=\"submit.php\">" .
+           "  Title: <input type=\"text\" name=\"title\" />" .
+           "  <textarea rows=\"32\" style=\"width:100%\" name=\"text\"></textarea><br />" .
+           "  <input type=\"checkbox\" name=\"showfront\" value=\"true\" checked=\"1\"/> Show on front page" .
+           "  <input type=\"hidden\" name=\"submittype\" value=\"blog\" />" .
+           "  <input type=\"submit\" value=\"Post\" style=\"float:right\"/>" .
+           "</form>";
+      echo "</div>";
+    break;
+  case "edit":
+      echo "<div class=\"edcBlog\">\n";
+      if ($selblog == null) {
+        echo "  <h1>ERROR: No blog selected</h1>\n</div>";
+        break;
+      }
+      echo "<form method=\"post\" action=\"submit.php\">" .
+           "  Title: <input type=\"text\" name=\"title\" value=\"" . htmlspecialchars($selblog['title']) . "\" />" .
+           "  <textarea rows=\"32\" style=\"width:100%\" name=\"text\">" . htmlspecialchars($selblog['text']) . "</textarea><br />" .
+           "  <input type=\"checkbox\" name=\"showfront\" value=\"true\"" . ($selblog['frontpage']==1?" checked=\"1\"":"") . " /> Show on front page" .
+           "  <input type=\"hidden\" name=\"submittype\" value=\"editblog\" />" .
+           "  <input type=\"hidden\" name=\"blogid\" value=\"" . $selblog['id_blog'] . "\" />" .
+           "  <input type=\"submit\" value=\"Post\" style=\"float:right\"/>" .
+           "</form>";
+      echo "</div>";
+    break;
+  default:
+    echo "<h1>Unknown request.</h1>";
+    break;
+}       
+
+echo "</div>"; 
+?>
