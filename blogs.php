@@ -9,7 +9,7 @@ $blog_id = !empty($_GET['blog']) ? $_GET['blog'] : -1;
 $member_id = !empty($_GET['u']) ? $_GET['u'] : (!empty($_GET['user']) ? $_GET['user'] : 
              ($context['user']['is_guest'] ? 1 : $user_info['id']));
 if ($blog_id != -1) {
-  $smcFunc['db_select_db']("enigma_forums");
+  $smcFunc['db_select_db']($db_name);
   $blog_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_blog={int:bid}', array("bid"=>$blog_id));
   $selblog = mysql_fetch_assoc($blog_query);
   if ($selblog !== false)
@@ -31,7 +31,7 @@ include('panel_activeusers.php');
 echo "</div>\n";
 
 echo "<div class=\"edcmainpane\">
-  <center><a href=\"blogs.php?u=" . $member_id . "\"><img alt=\"Banner\" src=\"" . (empty($member['banner']) ? "images/ENIGMA_Banner_Default.png" : $member['banner']) . "\" /></a></center>\n";
+  <center><a href=\"blogs.php?u=" . $member_id . "\"><img alt=\"Banner\" src=\"" . (empty($member['banner']) ? "images/Banner_Default.png" : $member['banner']) . "\" /></a></center>\n";
 
 // Now we do the action-specific part
 $action = !empty($_GET['action']) ? $_GET['action'] : "viewall";
@@ -40,7 +40,7 @@ switch ($action)
 {
   case "viewall":
       echo "  <script language=\"JavaScript\" src=\"script/edit.js\"></script>\n";
-      $smcFunc['db_select_db']("enigma_forums");
+      $smcFunc['db_select_db']($db_name);
       $comments_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_author={int:aid} ORDER BY id_blog DESC LIMIT 10', array("aid"=>$member_id));
       $hadblogs = false;
       while (($blog = mysql_fetch_assoc($comments_query)) !== false)

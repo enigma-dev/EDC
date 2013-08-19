@@ -1,0 +1,7 @@
+<?php
+  // Forum interface information
+  require_once('../forums/SSI.php'); // Change this to point to your forums directory on the server.
+  $db_name = "enigma_forums"; // The name of the forum database on the server.
+  $forum_path = "/forums"; // The URL path of the forums. This could have been http://enigma-dev.org/forums instead.
+  $siteroot = '/var/www/html/enigma-dev.org/'; // The root of the site on the server. Probably not actually used.
+?>

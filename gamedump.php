@@ -3,7 +3,7 @@ ob_start();
 require_once('common.php');
 require_once('fuck_php.php');
 
-$smcFunc['db_select_db']("enigma_forums");
+$smcFunc['db_select_db']($db_name);
 
 echo "Fixme: Make this page less ugly.<br/>";
 $game_list_q = $smcFunc['db_query']('', 'SELECT * FROM edc_games ORDER BY `date` DESC LIMIT 20',array());

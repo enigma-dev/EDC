@@ -6,7 +6,7 @@
     echo "  <a href=\"/forums/index.php?action=profile;u=" . $member_id . "\">Profile</a><br /><br />";
     echo "  <b>Badges</b><br /><div class=\"edcBadges\">&nbsp;</div><br />\n";
     
-    $smcFunc['db_select_db']("enigma_forums");
+    $smcFunc['db_select_db']($db_name);
     $comments_query = $smcFunc['db_query']('', 'SELECT * FROM edc_games WHERE id_author={int:aid} ORDER BY id_game', array("aid"=>$member_id));
     
     $gamecount = 0; $excount = 0;

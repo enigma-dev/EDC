@@ -19,7 +19,7 @@ else
           echo "<h1>Error</h1>\nPost contained no text. You will be redirected shortly.";
           return;
         }
-        $smcFunc['db_select_db']("enigma_forums");
+        $smcFunc['db_select_db']($db_name);
         $iq = $smcFunc['db_insert']('insert', 'edc_comments',
         	         array('id_author' => 'int',  'id_thread' => 'int', 'message' => 'string'),
         	         array($context['user']['id'], $_POST['thread_id'], $_POST['message']), 
@@ -29,10 +29,10 @@ else
         echo "You should be redirected to <a href=\"" . htmlspecialchars($_POST['redirect']) . "\">" . htmlspecialchars($_POST['redirect']) . "</a> shortly.";
       break;
     case 'edit':
-        $smcFunc['db_select_db']("enigma_forums");
+        $smcFunc['db_select_db']($db_name);
       break;
     case 'delete':
-        $smcFunc['db_select_db']("enigma_forums");
+        $smcFunc['db_select_db']($db_name);
       break;
   }
 }

@@ -1,7 +1,7 @@
 <?php
 require_once('../forums/SSI.php');
+require_once('config.php');
 
-$siteroot = '/var/www/html/enigma-dev.org/';
 register_shutdown_function('edcj_clearfix');
 function edcj_clearfix() { echo '<div class="clear"></div>'; }
 include('../site/template.php');

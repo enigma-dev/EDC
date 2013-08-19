@@ -1,16 +1,16 @@
 <?php
-require_once('../../forums/SSI.php');
+require_once('../config.php');
 switch ($_GET['action'])
 {
   case 'getc':
-      $smcFunc['db_select_db']("enigma_forums");
+      $smcFunc['db_select_db']($db_name);
       $comment_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_comment={int:cid}', array("cid"=>$_GET['id']));
       $cmnt = mysql_fetch_assoc($comment_query);
       if ($cmnt !== false)
         echo $cmnt['message']; // With HTML special chars: JavaScript will take care of that part.
     break;
   case 'putc':
-      $smcFunc['db_select_db']("enigma_forums");
+      $smcFunc['db_select_db']($db_name);
       $comment_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_comment={int:cid}', array("cid"=>$_POST['id']));
       $cmnt = mysql_fetch_assoc($comment_query);
       if ($cmnt === false) {
@@ -32,7 +32,7 @@ switch ($_GET['action'])
       echo parse_bbc(htmlspecialchars($_POST['message']));
     break;
   case 'delc':
-      $smcFunc['db_select_db']("enigma_forums");
+      $smcFunc['db_select_db']($db_name);
       $comment_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_comment={int:cid}', array("cid"=>$_GET['id']));
       $cmnt = mysql_fetch_assoc($comment_query);
       if ($cmnt === false) {

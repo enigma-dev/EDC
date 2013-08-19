@@ -2,7 +2,7 @@
   <div class="edctitlebar">Blogs</div>
   <?php
     // Grab some blogs to display
-    $smcFunc['db_select_db']("enigma_forums");
+    $smcFunc['db_select_db']($db_name);
     $fp_blog_q = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE frontpage=true ORDER BY id_blog DESC LIMIT 10',array());
     $wrote_blog = false;
     while (($fp_blog = mysql_fetch_assoc($fp_blog_q)) !== false) {

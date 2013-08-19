@@ -8,7 +8,7 @@
      *     $thread_id must be the id of the thread whose comments are to be displayed
      *     $insert_rating is reserved.
     */
-    $smcFunc['db_select_db']("enigma_forums");
+    $smcFunc['db_select_db']($db_name);
     $comments_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_thread={int:tid} ORDER BY id_comment', array("tid"=>$thread_id));
     $i = 1;
     while(($comment = mysql_fetch_assoc($comments_query)) !== false)

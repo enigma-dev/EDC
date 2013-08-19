@@ -2,7 +2,7 @@
 ob_start();
 require_once('common.php');
 require_once('fuck_php.php');
-$smcFunc['db_select_db']("enigma_forums");
+$smcFunc['db_select_db']($db_name);
 $_GET['action'] = 'edc_index';
 
 echo

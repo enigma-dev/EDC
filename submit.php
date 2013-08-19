@@ -1,5 +1,6 @@
 <?php
 require_once('common.php');
+
 if ($context['user']['is_guest'])
 {
   echo "<h1>No login; perhaps it has expired. Redirecting in three seconds...</h1>";
@@ -21,7 +22,7 @@ else
           return;
         }
         // Make a new comment thread for this blog
-        $smcFunc['db_select_db']("enigma_forums");
+        $smcFunc['db_select_db']($db_name);
         $smcFunc['db_insert']('insert', 'edc_threads',
                   array('id_author' => 'int'),
                   array($context['user']['id']), 
@@ -52,7 +53,7 @@ else
           return;
         }
         
-        $smcFunc['db_select_db']("enigma_forums");
+        $smcFunc['db_select_db']($db_name);
         $blog_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_blog={int:bid}', array("bid"=>$blog_id));
         $selblog = mysql_fetch_assoc($blog_query);
         if ($selblog === false) {
@@ -97,7 +98,7 @@ else
         $wip = $_POST['wip'] === 'true' ? 1 : 0;
         
         // Make a new thread for this game
-        $smcFunc['db_select_db']("enigma_forums");
+        $smcFunc['db_select_db']($db_name);
         $smcFunc['db_insert']('insert', 'edc_threads',
                   array('id_author' => 'int'),
                   array($context['user']['id']), 
@@ -125,7 +126,7 @@ else
           return false;
         }
         
-        $smcFunc['db_select_db']("enigma_forums");
+        $smcFunc['db_select_db']($db_name);
         $blog_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_blog={int:bid}', array("bid"=>$blog_id));
         $selblog = mysql_fetch_assoc($blog_query);
         if ($selblog === false) {
@@ -151,7 +152,7 @@ else
           return false;
         }
         
-        $smcFunc['db_select_db']("enigma_forums");
+        $smcFunc['db_select_db']($db_name);
         $game_query = $smcFunc['db_query']('', 'SELECT * FROM edc_games WHERE id_game={int:gid}', array("gid"=>$game_id));
         $selgame = mysql_fetch_assoc($game_query);
         if ($selgame === false) {
@@ -177,7 +178,7 @@ else
           return false;
         }
         
-        $smcFunc['db_select_db']("enigma_forums");
+        $smcFunc['db_select_db']($db_name);
         $game_query = $smcFunc['db_query']('', 'SELECT * FROM edc_games WHERE id_game={int:gid}', array("gid"=>$game_id));
         $selgame = mysql_fetch_assoc($game_query);
         if ($selgame === false) {
@@ -210,7 +211,7 @@ else
           $genre = "";
         $wip = $_POST['wip'] === 'true' ? 1 : 0;
         
-        $smcFunc['db_select_db']("enigma_forums");
+        $smcFunc['db_select_db']($db_name);
         $smcFunc['db_query']('', 'UPDATE edc_games SET name={string:gn}, text={string:txt}, image={string:img}, ' .
                              'type={string:gt}, wip={int:wip}, genre={string:gg}, dllink={string:dll} WHERE id_game={int:gid}',
         	        array('gn'=>$_POST['name'], 'txt'=>$_POST['description'], 'img'=>$image, 'gt'=>$type,
