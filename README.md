@@ -6,7 +6,7 @@ This is an SMF-based board for blogging and sharing games.
 Features:
 * User pages for all SMF users
 * Blogs with SMF BBCode
-** Comments on each blog, with SMF BBCode
+ * Comments on each blog, with SMF BBCode
 * Recent blogs list
 * Game posts
  * Thumbnails for use in game lists
