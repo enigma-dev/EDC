@@ -59,28 +59,22 @@ switch ($action)
   
   
   case 'new':
+      require_once('submitgame.php');
       echo "<div class=\"edcpanes_left\">\n";
       include('panel_user.php');
       include('panel_blogs.php');
       include('panel_activeusers.php');
       echo "</div><div class=\"edcmainpane\"><div class=\"edcpane\">\n";
       echo "<div class=\"edcTitleBar\">Submit Game/Example</div>\n";
-      echo "<form method=\"post\" action=\"submit.php\">\n<table columns=\"3\">";
-      echo "<tr><td>Name:</td><td colspan=\"2\"><input type=\"text\" name=\"name\" /></td></tr>\n";
-      echo "<tr><td>Type:</td><td><input type=\"radio\" name=\"type\" value=\"game\" />Game</td><td><input type=\"radio\" name=\"type\" value=\"example\"> Example</td></tr>\n";
-      echo "<tr><td>Work in progress:</td><td><input type=\"checkbox\" name=\"wip\" value=\"true\" /> WIP</td></tr>\n";
-      echo "<tr><td>Genre:</td><td colspan=\"2\"><input type=\"text\" name=\"genre\" />";
-      echo "<tr><td colspan=\"3\">Description:</td></tr><tr><td colspan=\"3\"><textarea name=\"description\" rows=\"16\" style=\"width:530px\"></textarea></td></tr>";
-      echo "<tr><td>Thumbnail:</td><td colspan=\"2\"><input type=\"text\" name=\"thumb\" value=\"http://\" style=\"width:320px\" /></td></tr>";
-      echo "<tr><td>Download:</td><td colspan=\"2\"><input type=\"text\" name=\"dllink\" value=\"http://\" style=\"width:320px\" /></td></tr>";
-      echo "<tr><td style=\"text-align: right; padding: 4px;\" colspan=\"3\"><input type=\"submit\" value=\"Submit\"></td></tr>";
-      echo "</table>";
+      echo "<form method=\"post\" action=\"submit.php\">";
+      print_game_form();
       echo "<input type=\"hidden\" name=\"submittype\" value=\"game\" />";
       echo "</form></div></div>";
     break;
     
   case 'edit':
       // Grab some info about the game we're displaying
+      require_once('submitgame.php');
       $game_id = $_GET['game'];
       if (empty($game_id)) {
         echo "<h1>ERROR: No game to edit!</h1>";
@@ -97,17 +91,9 @@ switch ($action)
       include('panel_activeusers.php');
       echo "</div><div class=\"edcmainpane\"><div class=\"edcpane\">\n";
       echo "<div class=\"edcTitleBar\">Edit Game/Example</div>\n";
-      echo "<form method=\"post\" action=\"submit.php\">\n<table columns=\"3\">";
-      echo "<tr><td>Name:</td><td colspan=\"2\"><input type=\"text\" name=\"name\" value=\"" . htmlspecialchars($game_info['name']) . "\"/></td></tr>\n";
-      $ig = strtolower($game_info['type']) == "game";
-      echo "<tr><td>Type:</td><td><input type=\"radio\" name=\"type\" value=\"game\" " . ($ig?"checked":"") . "/>Game</td><td><input type=\"radio\" name=\"type\" value=\"example\" " . ($ig?"":"checked") . "> Example</td></tr>\n";
-      echo "<tr><td>Work in progress:</td><td><input type=\"checkbox\" name=\"wip\" value=\"true\" " . ($game_info['wip']?"checked":"") . "/> WIP</td></tr>\n";
-      echo "<tr><td>Genre:</td><td colspan=\"2\"><input type=\"text\" name=\"genre\" value=\"" . htmlspecialchars($game_info['genre']) . "\"/>";
-      echo "<tr><td colspan=\"3\">Description:</td></tr><tr><td colspan=\"3\"><textarea name=\"description\" rows=\"16\" style=\"width:530px\">" . htmlspecialchars($game_info['text']) . "</textarea></td></tr>";
-      echo "<tr><td>Thumbnail:</td><td colspan=\"2\"><input type=\"text\" name=\"thumb\" value=\"" . htmlspecialchars($game_info['image']) . "\" style=\"width:320px\" /></td></tr>";
-      echo "<tr><td>Download:</td><td colspan=\"2\"><input type=\"text\" name=\"dllink\" value=\"" . htmlspecialchars($game_info['dllink']) . "\" style=\"width:320px\" /></td></tr>";
-      echo "<tr><td style=\"text-align: right; padding: 4px;\" colspan=\"3\"><input type=\"submit\" value=\"Submit\"></td></tr>";
-      echo "</table>";
+      echo "<form method=\"post\" action=\"submit.php\">";
+      $isgame = strtolower($game_info['type']) == "game";
+      print_game_form($game_info['name'], $game_info['genre'], $game_info['text'], $isgame, $game_info['wip'], $game_info['image'], array($game_info['dllink']));
       echo "<input type=\"hidden\" name=\"submittype\" value=\"editgame\" />";
       echo "<input type=\"hidden\" name=\"game_id\" value=\"" . $game_id . "\" />";
       echo "</form></div></div>";
