@@ -131,3 +131,38 @@ a, a:visited {
 a:active, a:hover {
   color: #FF0000;
 }
+
+.edc_activity {
+    border: 1px solid #C0C0C0;
+    padding: 1px;
+    min-height: 48px;
+    margin: 1px 0;
+    width: 100%;
+    vertical-align: middle;
+    display: inline-block;
+}
+.activity_icondiv {
+    float: left;
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+}
+.activity_datadiv {
+    float: right;
+    width: 90%;
+    display: inline-block;
+    padding: 0 1px;
+}
+.activity_message {
+    min-height: 32px;
+}
+.activity_footer {
+    background: #CCC;
+    height: 16px;
+    font-size: small;
+    width: 100%
+}
+.activity_icon {
+    width: 48px;
+    height: 48px;
+}
