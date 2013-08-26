@@ -1,7 +1,23 @@
 <?php
+/* Copyright (C) 2011-2013 Josh Ventura <JoshV10@gmail.com>
+ * 
+ * This file is part of the ENIGMA Developers Community (EDC).
+ * 
+ * The EDC is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, version 3 of the License, or (at your option) any later version.
+ * 
+ * This source is distributed in the hope that it will be useful, but WITHOUT ANY 
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this code. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 ob_start();
 require_once('common.php');
-require_once('fuck_php.php');
+require_once('reURL.php');
 $smcFunc['db_select_db']($db_name);
 $_GET['action'] = 'edc_index';
 

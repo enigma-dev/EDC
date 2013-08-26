@@ -1,4 +1,4 @@
-<?
+<?php
 /* Copyright (C) 2011-2013 Josh Ventura <JoshV10@gmail.com>
  *
  * This file is part of the ENIGMA Developers Community (EDC).
@@ -14,16 +14,21 @@
  * You should have received a copy of the GNU General Public License along with
  * this code. If not, see <http://www.gnu.org/licenses/>.
 */
-?>
 
-<div class="edcpane">
-  <div class="edctitlebar">Active Users</div>
-  <?php
-    $onlineMembers = ssi_logOnline('array');
-    foreach ($onlineMembers['users'] as $activemember)
-    {
-      echo "<a href=\"blogs.php?u=" . $activemember['id'] . "\">" . $activemember['name'] . "</a><br />";
-    }
-    echo "<span class=\"edcSmallInfo\">" . ($onlineMembers['hidden']>0? $onlineMembers['hidden']." hidden, " : "") . $onlineMembers['guests'] . " guests</span>\n";
-  ?>
-</div><br />
+function reURL($url) {
+  $urlbits = parse_url(rawurldecode($url));
+  $fullurl = empty($urlbits['scheme']) ? "http://" : rawurlencode($urlbits['scheme']) . '://';
+  $fullurl .= empty($urlbits['host']) ? "/" : rawurlencode($urlbits['host']);
+  $fullurl .= empty($urlbits['port']) ? "" : ':' . rawurlencode($urlbits['port']) . '/';
+  if (!empty($urlbits['path']))
+  {
+    $pth = explode('/',$urlbits['path']);
+    foreach ($pth as $key => $value)
+      $pth[$key] = rawurlencode($value);
+    $fullurl .= implode('/', $pth);
+  }
+  if (!empty($urlbits['query'])) $fullurl .= '?' . rawurlencode($urlbits['query']);
+  if (!empty($urlbits['fragment'])) $fullurl .= '#' . rawurlencode($urlbits['fragment']);
+  return $fullurl;
+}
+?>
