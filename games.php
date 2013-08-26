@@ -75,7 +75,7 @@ switch ($action)
   
   
   case 'new':
-      require_once('submitgame.php');
+      require_once('form-game.php');
       echo "<div class=\"edcpanes_left\">\n";
       include('panel_user.php');
       include('panel_blogs.php');
@@ -90,7 +90,7 @@ switch ($action)
     
   case 'edit':
       // Grab some info about the game we're displaying
-      require_once('submitgame.php');
+      require_once('form-game.php');
       $game_id = $_GET['game'];
       if (empty($game_id)) {
         echo "<h1>ERROR: No game to edit!</h1>";
