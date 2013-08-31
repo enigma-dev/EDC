@@ -76,21 +76,25 @@ switch ($action)
   
   case 'new':
       require_once('form-game.php');
+      require_once('form-designer.php');
       echo "<div class=\"edcpanes_left\">\n";
       include('panel_user.php');
       include('panel_blogs.php');
       include('panel_activeusers.php');
       echo "</div><div class=\"edcmainpane\"><div class=\"edcpane\">\n";
-      echo "<div class=\"edcTitleBar\">Submit Game/Example</div>\n";
-      echo "<form method=\"post\" action=\"submit.php\">";
-      print_game_form();
+      echo "<div class=\"edctitlebar\">Submit Game/Example</div>\n";
+      echo "<form method=\"post\" action=\"submit.php\" style=\"margin-top: 3px;\" enctype=\"multipart/form-data\">";
+      $gfres = print_game_form();
       echo "<input type=\"hidden\" name=\"submittype\" value=\"game\" />";
       echo "</form></div></div>";
+      print_designer_form($gfres);
     break;
     
   case 'edit':
       // Grab some info about the game we're displaying
       require_once('form-game.php');
+      require_once('form-design.php');
+      
       $game_id = $_GET['game'];
       if (empty($game_id)) {
         echo "<h1>ERROR: No game to edit!</h1>";
@@ -106,13 +110,17 @@ switch ($action)
       include('panel_blogs.php');
       include('panel_activeusers.php');
       echo "</div><div class=\"edcmainpane\"><div class=\"edcpane\">\n";
-      echo "<div class=\"edcTitleBar\">Edit Game/Example</div>\n";
-      echo "<form method=\"post\" action=\"submit.php\">";
+      echo "<div class=\"edctitlebar\">Edit Game/Example</div>\n";
+      echo "<form method=\"post\" action=\"submit.php\" style=\"margin-top: 3px;\">";
       $isgame = strtolower($game_info['type']) == "game";
-      print_game_form($game_info['name'], $game_info['genre'], $game_info['text'], $isgame, $game_info['wip'], $game_info['image'], array($game_info['dllink']));
+      
+      require_once('file-api.php');
+      $gameFiles = get_game_files($game_id);
+      $gfres = print_game_form($game_info['name'], $game_info['genre'], $game_info['text'], $isgame, $game_info['wip'], $game_info['image'], $gameFiles['cats'], $gameFiles['links'], $gameFiles['screens']);
       echo "<input type=\"hidden\" name=\"submittype\" value=\"editgame\" />";
       echo "<input type=\"hidden\" name=\"game_id\" value=\"" . $game_id . "\" />";
       echo "</form></div></div>";
+      print_design_form($gfres);
     break;
   
   

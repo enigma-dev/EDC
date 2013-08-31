@@ -92,6 +92,51 @@ else
         echo "You should be redirected to <a href=\"blogs.php?action=comments&blog=" . $blog_id . "\">your new blog</a> shortly.";
       break;
     case 'game':
+        echo "<i>Sorry!</i> The EDC is <i>still</i> down while we move to cloud storage. This is a painful process requiring work with third-party APIs.<br/><br/><br/><pre>";
+        print_r($_POST);
+        $thumbfn = '';
+        if ($_POST['thumbsrc'] === 'custom') {
+          var_dump($_FILES);
+          $screen_no = 0;
+          if (array_key_exists('screenf_' . $screen_no, $_FILES))
+            $thumbfn = $_FILES['screenf_' . $screen_no]['tmp_name'];
+            if (empty($thumbfn))
+              $thumbfn = '';
+            
+            $outname = '/var/www/html/enigma-dev.org/edc/tthump.png';
+            
+            // $imgmc = 'convert -composite "' . $thumbfn . '"' . "'[154x96!]'" . ' images/frames/frame1.png "' . $outname . '"';
+            // echo($imgmc);
+            
+            // echo system($imgmc);
+            // echo '<br/><img src="tthump.png" />';
+            
+            $desw = 154;
+            $desh = 96;
+            $x = intval($_POST['crop_x']);
+            $y = intval($_POST['crop_y']);
+            $w = intval($_POST['crop_w']);
+            $h = intval($_POST['crop_h']);
+            if ($w < $desw) $w = $desw;
+            if ($h < $desh)  $h = $desh;
+            $imm = new Imagick($thumbfn);
+            echo 'all good<br/>';
+            $imm->cropImage($w, $h, $x, $y);
+            $imm->scaleImage(154, 96);
+            echo 'keeping on<br/>';
+            if (strtolower($_POST['thumb_frameid']) !== 'none')
+              $imm->compositeImage(new Imagick('images/frames/frame' . intval($_POST['thumb_frameid']) . '.png'), imagick::COMPOSITE_ATOP, 0, 0);
+            echo 'final stretch<br />';
+            try { $imm->writeImage($outname);
+            echo 'still ok<br/>'; }
+            catch (Exception $e) {
+              echo $e;
+            }
+            
+            echo '<br /><img src="tthump.png" alt="Crap." />';
+        }
+        echo "</pre>";
+        die();
         if (empty($_POST['dllink'])) {
           echo "<h1>Error</h1>\nNowhere to download!";
           return;
