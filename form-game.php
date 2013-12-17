@@ -44,7 +44,7 @@
     <table columns="3" id="submittable">
       <tr>
         <td>Name:</td>
-        <td colspan="2"><input type="text" name="name" value="' . htmlspecialchars($game_info['name']) . '" class="sized" placeholder="A name for your game"/></td>
+        <td colspan="2"><input type="text" name="name" value="' . htmlspecialchars($gameName) . '" class="sized" placeholder="A name for your game"/></td>
       </tr>
       <tr>
         <td>Genre:</td>
@@ -85,17 +85,17 @@
       $defaults = array("Web", "OS X", "Linux", "Windows", "Source");
       for ($i = 0; $num > 0; ++$i) {
         if (array_key_exists($i, $dlLinks)) {
-          $ph = $dlLinks[$i];
+          $dn = $dlNames[$i];
           $dl = $dlLinks[$i];
-          $up = 'Delete ' . $dlLinks[$i];
+          $up = $dn . ' download will be deleted';
         } else {
-          $ph = $defaults[--$num];
+          $dn = $defaults[--$num];
           $dl = '';
           $up = 'URL to upload, instead of file';
         }
         echo '
       <tr>
-        <td><input type="text" id="idln_' . $i . '" name="dlname_' . $i . '" value="' . htmlspecialchars($dlLinks[0]) . '" class="gamecatinput" placeholder="' . $ph . '" /></td>
+        <td><input type="text" id="idln_' . $i . '" name="dlname_' . $i . '" value="' . htmlspecialchars($dn) . '" class="gamecatinput" placeholder="' . $dn . '" /></td>
         <td><input type="text" id="idll_' . $i . '" name="dllink_' . $i . '" value="' . htmlspecialchars($dl) . '" class="gameurlinput" placeholder="' . $up . '" /></td>
         <td><input type="file" id="idlf_' . $i . '" name="dllink_' . $i . '" value="' . htmlspecialchars($dl) . '" class="gamefileinput" /></td>
       </tr>';
@@ -197,6 +197,7 @@ function unblock(numgames, numscreens) {
   r = document.getElementById("designradio");
   if (r != null) r.className = "";
   r.innerHTML = "I would like to design one from a screenshot";
+  update_combobox();
   return 0;
 }
 
@@ -246,6 +247,7 @@ function showDesigner() {
   a.style.display = null;
   find_usable_screens();
   update_combobox();
+  start_designer();
 }
 
 function find_usable_screens() {

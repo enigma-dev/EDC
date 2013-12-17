@@ -26,7 +26,7 @@ if ($context['user']['is_guest'])
 }
 else
 {
-  switch ($_POST['submittype'] . $_GET['action'])
+  switch (empty($_POST['submittype'])? $_GET['action'] : $_POST['submittype'])
   {
     case 'blog':
         if (empty($_POST['text'])) {
@@ -103,7 +103,7 @@ else
             if (empty($thumbfn))
               $thumbfn = '';
             
-            $outname = '/var/www/html/enigma-dev.org/edc/tthump.png';
+            $outname = '/var/www/html/enigma-dev.org/edc/scrtest/tthump.png';
             
             // $imgmc = 'convert -composite "' . $thumbfn . '"' . "'[154x96!]'" . ' images/frames/frame1.png "' . $outname . '"';
             // echo($imgmc);
@@ -127,15 +127,20 @@ else
             if (strtolower($_POST['thumb_frameid']) !== 'none')
               $imm->compositeImage(new Imagick('images/frames/frame' . intval($_POST['thumb_frameid']) . '.png'), imagick::COMPOSITE_ATOP, 0, 0);
             echo 'final stretch<br />';
-            try { $imm->writeImage($outname);
-            echo 'still ok<br/>'; }
+            try {
+              $imm->writeImage($outname);
+              echo 'still ok<br/>';
+            }
             catch (Exception $e) {
               echo $e;
             }
             
-            echo '<br /><img src="tthump.png" alt="Crap." />';
+            echo '<br /><img src="scrtest/tthump.png" alt="Crap." />';
         }
         echo "</pre>";
+        
+        
+        
         die();
         if (empty($_POST['dllink'])) {
           echo "<h1>Error</h1>\nNowhere to download!";
@@ -251,6 +256,7 @@ else
           return;
         }
         
+        die("Submit form will be implemented before edit form.");
         if (empty($_POST['dllink'])) {
           echo "<h1>Error</h1>\nNowhere to download!";
           return;

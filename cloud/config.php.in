@@ -1,0 +1,11 @@
+<?php
+
+$user = 'yourAPIuser';
+$auth_key = 'yourAPIkey';
+$baseurl = 'api.rackspacecloud.com';
+
+$main_store_label = 'ORD';
+$main_container = 'files-00000';
+$download_root = 'http://files.enigma-dev.org/';
+
+?>

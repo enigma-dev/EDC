@@ -15,7 +15,7 @@
         wcrop.value = state.width;
         hcrop.value = state.height;
       }
-      $(document).ready(function () {
+      function start_designer() {
         $('img#photo').imgAreaSelect({
           x1: 0, y1: 0, x2: 154, y2: 96,
           minWidth: 154, minHeight: 96,
@@ -23,6 +23,6 @@
           handles: true,
           onSelectChange: selectEnd
         });
-      });
+      }
     </script>
     <img id="photo" src="images/defcrop.png" alt="Image Crop" />

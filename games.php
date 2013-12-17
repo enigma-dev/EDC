@@ -35,6 +35,11 @@ switch ($action)
       echo "Game doesn't exist.";
       return false;
     }
+    
+    // Grab game files and screenshots
+    require_once('file-api.php');
+    $gfiles = get_game_files($game_id);
+    
     echo "<div class=\"edcpanes_left\">\n";
     echo "<div class=\"edcpane\">
       <div class=\"edctitlebar\">Game Information</div>";
@@ -47,11 +52,14 @@ switch ($action)
           echo "        <center><div class=\"edcAvatar\">" . $author_info['avatar']['image'] . "</div></center>\n" .
                "        <b>Author:</b><br /><div style=\"padding: 0px 0px 12px 24px\"><a href=\"blogs.php?u=" . $game_info['id_author'] . "\">" . $author_info['name'] . "</a></div>\n";
         }
+
         echo   "        <b>Rating:</b><br /><div style=\"padding: 0px 0px 12px 24px\">" . ($game_info['ratecount'] ? $game_info['totalrating'] / $game_info['ratecount'] : "Unrated") . "</div>\n";
         echo   "        <b>Type:</b><br /><div style=\"padding: 0px 0px 12px 24px\">" . htmlspecialchars($game_info['type']) . "</div>\n";
         echo   "        <b>Genre:</b><br /><div style=\"padding: 0px 0px 12px 24px\">" . htmlspecialchars($game_info['genre']) . "</div>\n";
         echo   "        <b>Submited:</b><br /><div style=\"padding: 0px 0px 12px 24px\">" . htmlspecialchars($game_info['date']) . "</div>\n";
-        echo   "        <b>Download:</b><br /><div style=\"padding: 0px 0px 12px 24px\"><a href=\"" . reURL($game_info['dllink']) . "\">DOWNLOAD</a></div>\n";
+        echo   "        <b>Download" . (count($gfiles['links']) == 1? "" : "s (" . count($gfiles['links']) . ")") . ":</b><br />";
+        for ($i = 0; $i < count($gfiles['links']); ++$i)
+          echo "<div style=\"padding: 0px 0px 12px 24px\"><a href=\"" . $gfiles['links'][$i] . "\">" . $gfiles['cats'][$i] . "</a></div>\n";
       echo "</div><br />";
     include('panel_activeusers.php');
     
@@ -62,7 +70,9 @@ switch ($action)
         echo "      <h1 class=\"edcGameTitle\">" . htmlspecialchars($game_info['name']) . "</h1>\n";
         echo "      <div class=\"edcGameImage\"><img class=\"edcGameThumb\" alt=\"" . htmlspecialchars($game_info['name']) . "\" src=\"" . reURL($game_info['image']) . "\" /></div>\n";
         echo parse_bbc(htmlspecialchars($game_info['text']));
-      echo "    <div class=\"edcGameFooter\"><b>Screenshots</b>: <i>Unsupported</i>";
+      echo "    <div class=\"edcGameFooter\"><b>Screenshots</b>:<br />";
+      foreach ($gfiles['screens'] as $screen)
+        echo '<a href="' . $screen . '" target="_blank"><img class="screenshot" src="' . $screen . '" alt="Screenshot" /></a>';
       if ($game_info['id_author'] == $context['user']['id'])
         echo "<span style=\"float:right\"><a href=\"games.php?action=edit&game=" . $game_id . "\">Edit</a> | "
            . "<a href=\"submit.php?action=delgame&game=" . $game_id . "\" onclick=\"javascript:return confirmDelete('game');\">Delete</a></span>";
@@ -93,7 +103,7 @@ switch ($action)
   case 'edit':
       // Grab some info about the game we're displaying
       require_once('form-game.php');
-      require_once('form-design.php');
+      require_once('form-designer.php');
       
       $game_id = $_GET['game'];
       if (empty($game_id)) {
@@ -120,7 +130,7 @@ switch ($action)
       echo "<input type=\"hidden\" name=\"submittype\" value=\"editgame\" />";
       echo "<input type=\"hidden\" name=\"game_id\" value=\"" . $game_id . "\" />";
       echo "</form></div></div>";
-      print_design_form($gfres);
+      print_designer_form($gfres);
     break;
   
   

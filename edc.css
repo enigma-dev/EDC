@@ -124,6 +124,12 @@
   height: 80px;
 }
 .descpreview { overflow: hidden; height: 80px; }
+.screenshot {
+  max-width: 154px;
+  max-height: 154px;
+  float: left;
+  margin: 3px;
+}
 
 a, a:visited {
   color: navy;
