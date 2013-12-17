@@ -4,7 +4,7 @@
 
 define("DEBUG", true);
 
-function curl($url, $headers, $post=null, $method=null, $flags = array()) {
+function curl($url, $headers, $post = null, $method = null, $flags = array()) {
 	$ch = curl_init($url);
 
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

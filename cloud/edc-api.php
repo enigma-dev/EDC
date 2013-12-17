@@ -18,7 +18,7 @@
 require_once('cloud/interface.php');
 
 function get_game_files($gid) {
-  global $stores, $authHdr, $main_store, $main_container;
+  global $stores, $authHdr, $main_store, $main_container, $download_root;
   $cats = array(); // Source, Windows, Linux, OS X...
   $links = array(); // The actual download links
   $metrics = array(); // Info about given files

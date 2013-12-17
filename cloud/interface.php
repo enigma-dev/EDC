@@ -1,6 +1,6 @@
 <?php
 //Copyright (C) 2013 IsmAvatar <IsmAvatar@gmail.com>
-//Copyright (C) 2013 Josh Ventura <JoshV10@gmail.com>
+//Copyright (C) 2013 Josh Ventura <JoshV10@gmail.com
 //This file is licensed under the MIT license. See LICENSE for details.
 
 require_once('cloud/funcs.php');
@@ -21,7 +21,7 @@ function authorize($baseurl, $user, $auth_key) {
 	$url = 'https://identity.' . $baseurl . '/v2.0/tokens';
 	$hdr = array('Content-Type: application/json');
 	$pst = json_encode($auth);
-	$output = curl($url,$hdr,$pst,null);
+	$output = curl($url,$hdr,$pst);
 
 	return json_decode($output);
 }
