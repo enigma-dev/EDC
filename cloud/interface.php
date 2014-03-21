@@ -45,6 +45,9 @@ unset($auth_key);
 $authHdr = array('X-Auth-Token: ' . $out->access->token->id);
 $endpts = $out->access->serviceCatalog[0]->endpoints;
 
+
+print_r($endpts);
+die()
 $stores = array();
 foreach ($endpts as $endpt) {
 	$stores[$endpt->region] = new Store(

@@ -94,6 +94,8 @@ else
     case 'game':
         echo "<i>Sorry!</i> The EDC is <i>still</i> down while we move to cloud storage. This is a painful process requiring work with third-party APIs.<br/><br/><br/><pre>";
         print_r($_POST);
+	echo "<br /><br />";
+	print_r($_FILES);
         $thumbfn = '';
         if ($_POST['thumbsrc'] === 'custom') {
           var_dump($_FILES);
