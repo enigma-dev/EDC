@@ -12,19 +12,19 @@ $c1 = 'screens-00000';
 $objs = getObjects($s,$c1,null,$authHdr);
 
 foreach ($objs as $obj) {
- $n = $obj->name;
+  $n = $obj->name;
 
-$url = getUrl($s, $c1, $n);
-$hdrs = $authHdr;
-$hdrs[] = "Destination: /$c0/$n";
-$code = curl($url, $hdrs, null, 'COPY', array('CODE'));
+  $url = getUrl($s, $c1, $n);
+  $hdrs = $authHdr;
+  $hdrs[] = "Destination: /$c0/$n";
+  $code = curl($url, $hdrs, null, 'COPY', array('CODE'));
 
-if ($code < 200 || $code >= 300)
- echo '<h3>';
- echo "$code $c1/$n -> $c0/$n";
-if ($code < 200 || $code >= 300)
- echo '</h3>';
-echo '<br />';
+  if ($code < 200 || $code >= 300)
+    echo '<h3>';
+  echo "$code $c1/$n -> $c0/$n";
+  if ($code < 200 || $code >= 300)
+    echo '</h3>';
+   echo '<br />';
 }
 
 include('tree.php');

@@ -34,6 +34,8 @@ function get_game_files($gid) {
   $regpre = preg_quote($prefix, '/');
   foreach ($objs as $file)
   {
+    // print "sexy file dance<br/>";
+    // print nl2br(print_r($file,true));
     $matches = array();
     if (preg_match('/' . $regpre . 'file\/[0-9]+\/[0-9a-fA-F]+\/(.*?)\/(.*)/', $file->name, $matches))
     {
@@ -53,9 +55,9 @@ function get_game_files($gid) {
       array_push($cats,    "ERROR");
       array_push($links,   $download_root . $file->name);
       array_push($metrics, array(
-       'size' => $file->size,
-       'hash' => $file->hash,
-       'modified' => $file->last_modified
+        'size' => (property_exists($file, "size")? $file->size : property_exists($file, "bytes")? $file->bytes : "UNKNOWN SIZE"),
+        'hash' => (property_exists($file, "hash")? $file->hash : "??????"),
+        'modified' => (property_exists($file, "last_modified")? $file->last_modified : "??/??/??")
       ));
     }
   }

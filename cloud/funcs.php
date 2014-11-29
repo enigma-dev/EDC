@@ -56,7 +56,7 @@ function getUrl($store, $container, $object = null, $params = array()) {
 	}
 	else if (!empty($params)) {
 		//can't keep slashes here. Different encoding for url params.
-		$url .= '?' . http_build_query($params);
+		$url .= '?' . str_replace("%2F", '/', http_build_query($params, '', '&'));
 	}
 
 	return $url;
@@ -71,6 +71,15 @@ function getObjects($store, $container, $prefix = null, $authHdr) {
 	$params = array('format' => 'json');
 	if (!empty($prefix))
 		$params['prefix'] = $prefix;
+	$url = getUrl($store, $container, null, $params);
+	// echo "Calling with <span style=\"border: 1px solid blue; padding: 3px;\">" . htmlspecialchars($url) . "</span><br/>";
+	$output = curl($url, $authHdr);
+	// echo ("<pre style=\"border:1px solid red; padding: 8px;\">" . htmlspecialchars($output) . "</pre>");
+	return json_decode($output);
+}
+
+function getObjectsByPath($store, $container, $path, $authHdr) {
+	$params = array('format' => 'json', "prefix" => $path, "delimiter" => "/");
 	$url = getUrl($store, $container, null, $params);
 	$output = curl($url, $authHdr);
 	return json_decode($output);
@@ -97,7 +106,7 @@ function deleteObject($store, $container, $obj, $authHdr) {
 
 function getHdrs($store, $container, $obj, $authHdr) {
 	$url = getUrl($store, $container, $obj);
-echo $url . "<br />\n";
+	echo $url . "<br />\n";
 	return curl($url, $authHdr, null, 'HEAD', array('CODE'));
 }
 ?>

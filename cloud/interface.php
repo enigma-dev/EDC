@@ -31,10 +31,10 @@ class Store {
 	public $url;
 	public $internal;
 
-	function __construct($reg, $pub, $int) {
+	function __construct($reg, $pub) {
 		$this->region = $reg;
 		$this->url = $pub;
-		$this->internal = $int;
+		// $this->internal = $int;
 	}
 }
 
@@ -44,16 +44,22 @@ unset($auth_key);
 //get token and stores
 $authHdr = array('X-Auth-Token: ' . $out->access->token->id);
 $endpts = $out->access->serviceCatalog[0]->endpoints;
+foreach ($out->access->serviceCatalog as $service)
+	if (!strcasecmp($service->name, 'CloudFiles'))
+		$endpts = $service->endpoints;
 
-
-print_r($endpts);
-die()
+/*
+echo '<pre style="border: 1px solid green; padding: 8px;">';
+print_r($out->access->serviceCatalog);
+echo '</pre>';
+*/
 $stores = array();
 foreach ($endpts as $endpt) {
+	// echo "STORE:<br/>";
+	// print nl2br(print_r($endpt,true));
 	$stores[$endpt->region] = new Store(
 		$endpt->region,
-		$endpt->publicURL,
-		$endpt->internalURL
+		$endpt->publicURL
 	);
 }
 
