@@ -109,6 +109,7 @@ require_once('cloud/tree.php');
   border-radius: 8px;
   max-width: 720px;
   box-sizing: border-box;
+  margin-bottom: 16px;
 }
 .fileopsuccess {
   border: 2px solid #228B22;
@@ -221,6 +222,23 @@ if (isset($_POST['upload']) && isset($_FILES['uploadfile'])) {
        . "</div>\n";
   }
   exit;
+}
+
+if (isset($_GET['del'])) {
+  $del = $_GET['del'];
+  if (substr($del, -1) == '/') {
+    echo '<div class="fileopfailure">Deleting directories is not actually'
+       . ' implemented, as it\'s just too damn dangerous.</div>' . "\n";
+  } else {
+    $res = deleteObject($s,$c,$del,$authHdr);
+    if ($res) {
+      echo '<div class="fileopsuccess">File "' . htmlspecialchars($del)
+         . '" was deleted successfully.</div>';
+    } else {
+       echo '<div class="fileopfailure">File "' . htmlspecialchars($del)
+         . '" could not be deleted....</div>';
+    }
+  }
 }
 
 // ============================================================================

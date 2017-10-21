@@ -8,6 +8,13 @@ function curl($url, $headers, $post = null, $method = null, $flags = array()) {
 	$ch = curl_init($url);
 
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+	curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+	//curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
+	//curl_setopt ($ch, CURLOPT_CAINFO, "/etc/ssl/cacert.pem");
+	//curl_setopt ($ch, CURLOPT_VERBOSE, TRUE);
+
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 	if (isset($post) && !empty($post))
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
@@ -114,15 +121,17 @@ function copyObjectToContainer($store, $container, $obj, $newContainer, $newObj,
         return curl($url, $hdrs, null, 'COPY', array('CODE'));
 }
 
+/**
+ * Delete the given object, returning TRUE iff successful.
+ */
 function deleteObject($store, $container, $obj, $authHdr) {
 	$url = getUrl($store, $container, $obj);
-	return curl($url, $authHdr, null, 'DELETE', array('CODE'));
+	return curl($url, $authHdr, null, 'DELETE', array('CODE')) == 204;
 }
 
-function oldphp_curl_file_create($filename, $mimetype, $postname) {
-  return "@$filename;filename=$postname;type=$mimetype";
-}
-
+/**
+ * Parse HTTP headers into an associative array.
+ */
 function parse_headers($header) {
 	$arr = preg_split('/\s*([A-Za-z0-9\-]+)\s*:\s*(.*?)\s*(?=\n)/', $header, -1, PREG_SPLIT_DELIM_CAPTURE);
 	$num = count($arr) - 1;
