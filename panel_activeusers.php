@@ -1,4 +1,4 @@
-<?
+<?php
 /* Copyright (C) 2011-2013 Josh Ventura <JoshV10@gmail.com>
  *
  * This file is part of the ENIGMA Developers Community (EDC).
