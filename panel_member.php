@@ -30,13 +30,15 @@ class="edcpane">
     
     $gamecount = 0; $excount = 0;
     $gamelist = ""; $exlist = "";
-    while (($gex = mysql_fetch_assoc($comments_query)) !== false) {
-      if (strcasecmp($gex['type'],"Game") == 0) {
-        $gamecount++;
-        $gamelist .= "    <a href=\"games.php?game=" . $gex['id_game'] . "\">" . htmlspecialchars($gex['name']) . "</a><br />\n";
-      } else if (strcasecmp($gex['type'],"Example") == 0) {
-        $excount++;
-        $exlist .= "    <a href=\"games.php?game=" . $gex['id_game'] . "\">" . htmlspecialchars($gex['name']) . "</a><br />\n";
+    if ($comments_query !== false) {
+      while (($gex = mysqli_fetch_assoc($comments_query)) != false) {
+        if (strcasecmp($gex['type'],"Game") == 0) {
+          $gamecount++;
+          $gamelist .= "    <a href=\"games.php?game=" . $gex['id_game'] . "\">" . htmlspecialchars($gex['name']) . "</a><br />\n";
+        } else if (strcasecmp($gex['type'],"Example") == 0) {
+          $excount++;
+          $exlist .= "    <a href=\"games.php?game=" . $gex['id_game'] . "\">" . htmlspecialchars($gex['name']) . "</a><br />\n";
+        }
       }
     }
     

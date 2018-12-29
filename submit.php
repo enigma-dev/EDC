@@ -71,8 +71,8 @@ else
         
         $smcFunc['db_select_db']($db_name);
         $blog_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_blog={int:bid}', array("bid"=>$blog_id));
-        $selblog = mysql_fetch_assoc($blog_query);
-        if ($selblog === false) {
+        $selblog = mysqli_fetch_assoc($blog_query);
+        if ($selblog == NULL) {
           echo "<h1>ERROR: Blog does not exist</h1>";
           return;
         }
@@ -196,8 +196,8 @@ else
         
         $smcFunc['db_select_db']($db_name);
         $blog_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_blog={int:bid}', array("bid"=>$blog_id));
-        $selblog = mysql_fetch_assoc($blog_query);
-        if ($selblog === false) {
+        $selblog = mysqli_fetch_assoc($blog_query);
+        if ($selblog == NULL) {
           echo "<h1>ERROR: Blog does not exist</h1>";
           return;
         }
@@ -222,8 +222,8 @@ else
         
         $smcFunc['db_select_db']($db_name);
         $game_query = $smcFunc['db_query']('', 'SELECT * FROM edc_games WHERE id_game={int:gid}', array("gid"=>$game_id));
-        $selgame = mysql_fetch_assoc($game_query);
-        if ($selgame === false) {
+        $selgame = mysqli_fetch_assoc($game_query);
+        if ($selgame == NULL) {
           echo "<h1>ERROR: Game does not exist</h1>";
           return;
         }
@@ -248,8 +248,8 @@ else
         
         $smcFunc['db_select_db']($db_name);
         $game_query = $smcFunc['db_query']('', 'SELECT * FROM edc_games WHERE id_game={int:gid}', array("gid"=>$game_id));
-        $selgame = mysql_fetch_assoc($game_query);
-        if ($selgame === false) {
+        $selgame = mysqli_fetch_assoc($game_query);
+        if ($selgame == NULL) {
           echo "<h1>ERROR: Game does not exist</h1>";
           return;
         }

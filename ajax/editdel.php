@@ -21,15 +21,15 @@ switch ($_GET['action'])
   case 'getc':
       $smcFunc['db_select_db']($db_name);
       $comment_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_comment={int:cid}', array("cid"=>$_GET['id']));
-      $cmnt = mysql_fetch_assoc($comment_query);
-      if ($cmnt !== false)
+      $cmnt = mysqli_fetch_assoc($comment_query);
+      if ($cmnt != NULL)
         echo $cmnt['message']; // With HTML special chars: JavaScript will take care of that part.
     break;
   case 'putc':
       $smcFunc['db_select_db']($db_name);
       $comment_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_comment={int:cid}', array("cid"=>$_POST['id']));
-      $cmnt = mysql_fetch_assoc($comment_query);
-      if ($cmnt === false) {
+      $cmnt = mysqli_fetch_assoc($comment_query);
+      if ($cmnt == NULL) {
         echo "<h1>Error.</h1>";
         break;
       }
@@ -50,8 +50,8 @@ switch ($_GET['action'])
   case 'delc':
       $smcFunc['db_select_db']($db_name);
       $comment_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_comment={int:cid}', array("cid"=>$_GET['id']));
-      $cmnt = mysql_fetch_assoc($comment_query);
-      if ($cmnt === false) {
+      $cmnt = mysqli_fetch_assoc($comment_query);
+      if ($cmnt == NULL) {
         echo "<h1>Error.</h1>";
         break;
       }

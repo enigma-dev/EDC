@@ -30,7 +30,7 @@ class="edcpane">
     $smcFunc['db_select_db']($db_name);
     $comments_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_thread={int:tid} ORDER BY id_comment', array("tid"=>$thread_id));
     $i = 1;
-    while(($comment = mysql_fetch_assoc($comments_query)) !== false)
+    while(($comment = mysqli_fetch_assoc($comments_query)) != NULL)
 
     {
       $lmd = loadMemberData(array($comment['id_author']));

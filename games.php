@@ -31,7 +31,7 @@ switch ($action)
     // Grab some info about the game we're displaying
     $game_id = !empty($_GET['game']) ? $_GET['game'] : -1;
     $game_info_q = $smcFunc['db_query']('', 'SELECT * FROM edc_games WHERE id_game={int:gid}',array("gid" => $game_id));
-    if (($game_info = mysql_fetch_assoc($game_info_q)) === false) {
+    if (($game_info = mysqli_fetch_assoc($game_info_q)) == NULL) {
       echo "Game doesn't exist.";
       return false;
     }
@@ -111,7 +111,7 @@ switch ($action)
         return false;
       }
       $game_info_q = $smcFunc['db_query']('', 'SELECT * FROM edc_games WHERE id_game={int:gid}',array("gid" => $game_id));
-      if (($game_info = mysql_fetch_assoc($game_info_q)) === false) {
+      if (($game_info = mysqli_fetch_assoc($game_info_q)) == NULL) {
         echo "<h1>Game doesn't exist.</h1>";
         return false;
       }
@@ -142,8 +142,8 @@ switch ($action)
       
       $game_list_q = $smcFunc['db_query']('', 'SELECT SQL_CALC_FOUND_ROWS * FROM edc_games ORDER BY `date` DESC LIMIT ' . $begin . ', ' . $show,array());
       $games_printed = 0;
-      $games_total_q = mysql_query("SELECT FOUND_ROWS();");
-      $games_total = mysql_result($games_total_q,0);
+      $games_total_q = $smcFunc['db_query']('', "SELECT FOUND_ROWS() as found");
+      $games_total = mysqli_fetch_assoc($games_total_q)["found"];
       
       echo "<script type=\"text/javascript\">
         function togglescroll(obj) {
@@ -160,7 +160,7 @@ switch ($action)
 </script>";
       echo "<span style=\"font-style: italic; font-size: 8px;\">Double click a description to activate scroll.</span>";
       echo "<table style=\"border: 3px double #0000C0; width: 80%;\">";
-      while (($tgame = mysql_fetch_assoc($game_list_q)) !== false) {
+      while (($tgame = mysqli_fetch_assoc($game_list_q)) != NULL) {
         echo "<tr>";
         // Game thumbnail image
         echo "<td rowspan=\"2\" class=\"thumbnailcell\">"

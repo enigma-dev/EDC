@@ -27,8 +27,8 @@ $member_id = !empty($_GET['u']) ? $_GET['u'] : (!empty($_GET['user']) ? $_GET['u
 if ($blog_id != -1) {
   $smcFunc['db_select_db']($db_name);
   $blog_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_blog={int:bid}', array("bid"=>$blog_id));
-  $selblog = mysql_fetch_assoc($blog_query);
-  if ($selblog !== false)
+  $selblog = mysqli_fetch_assoc($blog_query);
+  if ($selblog != NULL)
     $member_id = $selblog['id_author'];
   else
     $selblog = null;
@@ -59,7 +59,7 @@ switch ($action)
       $smcFunc['db_select_db']($db_name);
       $comments_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_author={int:aid} ORDER BY id_blog DESC LIMIT 10', array("aid"=>$member_id));
       $hadblogs = false;
-      while (($blog = mysql_fetch_assoc($comments_query)) !== false)
+      while (($blog = mysqli_fetch_assoc($comments_query)) != NULL)
       {
         $hadblogs = true;
         echo "  <div class=\"edcBlog\">";
@@ -69,7 +69,7 @@ switch ($action)
           echo "<a href=\"blogs.php?action=edit&blog=" . $blog['id_blog'] . "\">Edit</a> | " .
                "<a href=\"submit.php?action=delblog&blog=" . $blog['id_blog'] . "\" onclick=\"javascript:return confirmDelete('blog')\">Delete</a> | ";
         $ccount_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_thread={int:tid}', array("tid"=>$blog['id_thread']));
-        $cc = mysql_num_rows($ccount_query);
+        $cc = mysqli_num_rows($ccount_query);
         echo "<a href=\"blogs.php?action=comments&blog=" . $blog['id_blog'] . "\">Comments" . (empty($cc)?"":" (".$cc.")"). "</a>";
         echo "</div></div>";
       }

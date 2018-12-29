@@ -9,6 +9,7 @@
 
 require_once('config.php');
 include('tree.php');
+include('interface.php');
 
 if (isset($_REQUEST['s'])
  && !empty($_REQUEST['s'])

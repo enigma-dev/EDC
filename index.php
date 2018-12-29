@@ -40,7 +40,7 @@ echo "
       <div class=\"edctitlebar\">Recent Games</div>
       <table cols=3 rows=2>";
         $postedgame = false;
-        while (($game = mysql_fetch_assoc($fp_games)) !== false) 
+        while (($game = mysqli_fetch_assoc($fp_games)) != NULL) 
         {
           $postedgame = true;
           if (($thiscell++) % $gamesPerRow == 0)
@@ -86,22 +86,28 @@ echo "
       <div class=\"edctitlebar\">Recent Activity</div>";
       
       //echo "<textarea>" . $activity_query . "</textarea>";
-      $eventq = mysql_query($activity_query); //$smcFunc['db_query']('', $activity_query);
+      $modSettings['disableQueryCheck'] = 1;
+      $eventq = $smcFunc['db_query']('', $activity_query, array());
+      $modSettings['disableQueryCheck'] = 0;
       $messages = array();
       $userids = array();
       $dates = array();
-      while (($event = mysql_fetch_assoc($eventq)) !== false) {
-        array_push($messages, htmlspecialchars($event['action']) . ' <a href="' . htmlspecialchars($event['href']) . '">' . htmlspecialchars($event['place']) . '</a>' );
-        array_push($userids, $event['id_author']);
-        array_push($dates, $event['date']);
-      }
       
-      $lmd = loadMemberData($userids);
-      $len = count($messages);
-      for ($i = 0; $i < $len; ++$i) {
-        $lmc = loadMemberContext($userids[$i]);
-        $author_info = $memberContext[$userids[$i]];
-        echo '
+      if ($eventq == NULL) {
+        echo 'Well, crap. Try again later? Maybe?';
+      } else {
+        while (($event = mysqli_fetch_assoc($eventq)) != NULL) {
+          array_push($messages, htmlspecialchars($event['action']) . ' <a href="' . htmlspecialchars($event['href']) . '">' . htmlspecialchars($event['place']) . '</a>' );
+          array_push($userids, $event['id_author']);
+          array_push($dates, $event['date']);
+        }
+      
+        $lmd = loadMemberData($userids);
+        $len = count($messages);
+        for ($i = 0; $i < $len; ++$i) {
+          $lmc = loadMemberContext($userids[$i]);
+          $author_info = $memberContext[$userids[$i]];
+          echo '
       <div class="edc_activity">
         <div class="activity_icondiv">
           <a href="blogs.php?u=' . $author_info['id'] . '">
@@ -115,6 +121,7 @@ echo "
           <div class="activity_footer">' . $dates[$i] . '</div>
         </div>
       </div>';
+        }
       }
       echo "
     </div>
