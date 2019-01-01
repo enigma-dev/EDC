@@ -3,6 +3,8 @@
 //Copyright (C) 2013 IsmAvatar <IsmAvatar@gmail.com>
 //This file is licensed under the MIT license. See LICENSE for details.
 
+die('Leaving this file here does us no good.');
+
 require_once('config.php');
 #require_once('funcs.php');
 require_once('interface.php');

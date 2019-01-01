@@ -22,27 +22,31 @@ require_once('reURL.php');
 
 $selblog = null;
 $blog_id = !empty($_GET['blog']) ? $_GET['blog'] : -1;
-$member_id = !empty($_GET['u']) ? $_GET['u'] : (!empty($_GET['user']) ? $_GET['user'] : 
-             ($context['user']['is_guest'] ? 1 : $user_info['id']));
+$relevant_member = !empty($_GET['u']) ? $_GET['u'] : (!empty($_GET['user']) ? $_GET['user'] : -1);
 if ($blog_id != -1) {
   $smcFunc['db_select_db']($db_name);
   $blog_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_blog={int:bid}', array("bid"=>$blog_id));
   $selblog = mysqli_fetch_assoc($blog_query);
   if ($selblog != NULL)
-    $member_id = $selblog['id_author'];
+    $relevant_member = $selblog['id_author'];
   else
     $selblog = null;
 }
-
-$lmd = loadMemberData(array($member_id));
-if ($lmd === false) echo "Failed to load member data";
-//$member = $user_profile[$member_id];
-
-$lmc = loadMemberContext($lmd[0]);
-$member = $memberContext[$lmd[0]];
+$member_id = $relevant_member != -1 ? $relevant_member :
+             ($context['user']['is_guest'] ? -1 : $user_info['id']);
 
 echo "<div class=\"edcpanes_left\">\n";
-include('panel_member.php');
+if ($relevant_member != -1) {
+  $lmd = loadMemberData(array($member_id));
+  // if ($lmd === false) echo "Failed to load member data";
+  // $member = $user_profile[$member_id];
+  
+  $lmc = loadMemberContext($lmd[0]);
+  $member = $memberContext[$lmd[0]];
+  include('panel_member.php');
+} else {
+  include('panel_user.php');
+}
 include('panel_activeusers.php');
 echo "</div>\n";
 
@@ -50,20 +54,33 @@ echo "<div class=\"edcmainpane\">
   <center><a href=\"blogs.php?u=" . $member_id . "\"><img alt=\"Banner\" src=\"" . (empty($member['banner']) ? "images/Banner_Default.png" : $member['banner']) . "\" /></a></center>\n";
 
 // Now we do the action-specific part
-$action = !empty($_GET['action']) ? $_GET['action'] : "viewall";
+$action = !empty($_GET['action']) ? $_GET['action'] : "list";
 
 switch ($action)
 {
-  case "viewall":
+  case "list":
       echo "  <script language=\"JavaScript\" src=\"script/edit.js\"></script>\n";
       $smcFunc['db_select_db']($db_name);
-      $comments_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_author={int:aid} ORDER BY id_blog DESC LIMIT 10', array("aid"=>$member_id));
+      if ($relevant_member != -1) {
+        $comments_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs WHERE id_author={int:aid} ORDER BY id_blog DESC LIMIT 10', array("aid"=>$relevant_member));
+      } else {
+        $comments_query = $smcFunc['db_query']('', 'SELECT * FROM edc_blogs ORDER BY id_blog DESC LIMIT 10', array());
+      }
       $hadblogs = false;
       while (($blog = mysqli_fetch_assoc($comments_query)) != NULL)
       {
         $hadblogs = true;
         echo "  <div class=\"edcBlog\">";
-        echo "<h1 class=\"edcBlogTitle\">" . htmlspecialchars($blog['title']) . "</h1><span class=\"edcBlogDate\">Posted on " . $blog['date'] . "</span><hr>";
+        echo "<h1 class=\"edcBlogTitle\">" . htmlspecialchars($blog['title']) . "</h1><span class=\"edcBlogDate\">Posted on " . $blog['date'];
+
+        if ($relevant_member == -1) {  // If there's no specific member to whom these blogs belong, print a by-line
+          $author_id = $blog['id_author'];
+          $lamd = loadMemberData(array($author_id));
+          loadMemberContext($lamd[0]);
+          echo " by <a href=\"blogs.php?u=" . $author_id . "\">" . $memberContext[$lamd[0]]['name'] . "</a>";
+        }
+
+        echo "</span><hr>";
         echo parse_bbc(htmlspecialchars($blog['text'])) . "\n    <div class=\"edcBlogOptions\">";
         if (!$context['user']['is_guest'] && ($context['user']['id'] == $blog['id_author']))
           echo "<a href=\"blogs.php?action=edit&blog=" . $blog['id_blog'] . "\">Edit</a> | " .

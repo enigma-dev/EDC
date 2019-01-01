@@ -93,11 +93,18 @@ switch ($action)
       include('panel_activeusers.php');
       echo "</div><div class=\"edcmainpane\"><div class=\"edcpane\">\n";
       echo "<div class=\"edctitlebar\">Submit Game/Example</div>\n";
-      echo "<form method=\"post\" action=\"submit.php\" style=\"margin-top: 3px;\" enctype=\"multipart/form-data\">";
-      $gfres = print_game_form();
-      echo "<input type=\"hidden\" name=\"submittype\" value=\"game\" />";
-      echo "</form></div></div>";
-      print_designer_form($gfres);
+      if ($context['user']['is_logged']) {
+        echo "<form method=\"post\" action=\"submit.php\" style=\"margin-top: 3px;\" enctype=\"multipart/form-data\">";
+        $gfres = print_game_form();
+        echo "<input type=\"hidden\" name=\"submittype\" value=\"game\" />";
+        echo "</form>";
+        echo "</div><br/>";
+        print_designer_form($gfres);
+      } else {
+        echo "You must be signed in to post a game.";
+        echo "</div>";
+      }
+      echo "</div>";
     break;
     
   case 'edit':

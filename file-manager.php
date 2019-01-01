@@ -1,8 +1,8 @@
 
 <?php
-//Functional example to rename an object.
-//Copyright (C) 2013 IsmAvatar <IsmAvatar@gmail.com>
-//This file is licensed under the MIT license. See LICENSE for details.
+// Cloud file manager application.
+// Copyright (C) 2013 IsmAvatar <IsmAvatar@gmail.com>, Josh Ventura <JoshV10@gmail.com>
+// This file is licensed under the MIT license. See LICENSE for details.
 
 require_once('common.php');
 require_once('cloud/interface.php');

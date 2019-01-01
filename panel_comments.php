@@ -30,9 +30,7 @@ class="edcpane">
     $smcFunc['db_select_db']($db_name);
     $comments_query = $smcFunc['db_query']('', 'SELECT * FROM edc_comments WHERE id_thread={int:tid} ORDER BY id_comment', array("tid"=>$thread_id));
     $i = 1;
-    while(($comment = mysqli_fetch_assoc($comments_query)) != NULL)
-
-    {
+    while(($comment = mysqli_fetch_assoc($comments_query)) != NULL) {
       $lmd = loadMemberData(array($comment['id_author']));
       $lmc = loadMemberContext($lmd[0]);
       $c_author_info = $memberContext[$lmd[0]]; //$user_profile[$comment['id_author']];
@@ -51,10 +49,9 @@ class="edcpane">
            "#$i" .  "</span>" . "</td>
       </tr>
     </table></div>";
-    $i++;
+      $i++;
     }
-    if (!$context['user']['is_guest'])
-    {
+    if (!$context['user']['is_guest']) {
       $uri = (!empty($_SERVER['HTTPS'])) ? "https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'] 
                                          : "http://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
       echo "<b>Leave a comment</b><br />\n" .
@@ -64,6 +61,8 @@ class="edcpane">
            "  <input type=\"hidden\" name=\"redirect\" value=\"" . $uri . "\" />\n" .
            "  <input type=\"submit\" value=\"Submit\" />" .
            "</form>";
+    } elseif ($i == 1) {
+      echo '<i>No comments have been posted, yet. <a href="/forums/index.php?action=login">Log in</a> to post comments.</i>';
     }
   ?>
 </div><br />

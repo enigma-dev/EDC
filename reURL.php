@@ -18,7 +18,7 @@
 function reURL($url) {
   $urlbits = parse_url(rawurldecode($url));
   $fullurl = empty($urlbits['scheme']) ? "http://" : rawurlencode($urlbits['scheme']) . '://';
-  $fullurl .= empty($urlbits['host']) ? "/" : rawurlencode($urlbits['host']);
+  $fullurl .= empty($urlbits['host']) ? "" :       rawurlencode($urlbits['host']);
   $fullurl .= empty($urlbits['port']) ? "" : ':' . rawurlencode($urlbits['port']) . '/';
   if (!empty($urlbits['path']))
   {

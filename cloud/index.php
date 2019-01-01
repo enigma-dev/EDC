@@ -3,7 +3,11 @@
 <title>Cloud Overview</title>
 </head><body>
 
+Cloud API folder. Nothing to see, here.
+
 <?php
+return; // The following code will perform a dir of the entire store.
+
 //Copyright (C) 2013 IsmAvatar <IsmAvatar@gmail.com>
 //This file is licensed under the MIT license. See LICENSE for details.
 

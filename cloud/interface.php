@@ -3,8 +3,8 @@
 //Copyright (C) 2013 Josh Ventura <JoshV10@gmail.com
 //This file is licensed under the MIT license. See LICENSE for details.
 
-require_once('cloud/funcs.php');
-require_once('cloud/config.php');
+require_once(__DIR__.'/funcs.php');
+require_once(__DIR__.'/config.php');
 
 function authorize($baseurl, $user, $auth_key) {
 	//auth json

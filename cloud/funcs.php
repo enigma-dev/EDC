@@ -157,11 +157,12 @@ function putObject($store, $container, $destpath, $file, $authHdr) {
 	if (isset($method) && !empty($method))
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 
-	$fname = isset($file['tmp_name'])? $file['tmp_name'] : $file['name'];
-	$mtype = isset($file['mime'])? $file['mime']
-			: isset($file['mimetype'])? $file['mimetype']
-			: $file['type'];
-	$size = isset($file['size'])? $file['size'] : $file['filesize'];
+	$fname = is_string($file)          ? $file
+               : (isset($file['tmp_name']) ? $file['tmp_name']
+                                           : $file['name']);
+	$size = is_string($file)      ? filesize($file)
+              : (isset($file['size']) ? $file['size']
+                                      : $file['filesize']);
 
 	$fstream = fopen($fname, 'rb');
 	if ($fstream === FALSE) {

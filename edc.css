@@ -105,6 +105,24 @@
   background-color: #C0C0C0;
   padding: 8px;
 }
+.edc-error, .edc-notice, .edc-success {
+  border: 1.5px solid;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 4px;
+}
+.edc-notice {
+  border-color:     #888;
+  background-color: #DDD;
+}
+.edc-error {
+  border-color:     #902820;
+  background-color: #E0B0A8;
+}
+.edc-success {
+  border-color:     #208028;
+  background-color: #A8E0B0;
+}
 .thumbnailcell {
   border-top: 3px double #0000C0;
   padding: 4px;

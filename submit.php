@@ -16,6 +16,12 @@
 */
 
 require_once('common.php');
+require_once('cloud/edc-api.php');
+require_once('upload-processing.php');
+
+function key_or($arr, $key, $def) {
+  return array_key_exists($key, $arr) ? $arr[$key] : $def;
+}
 
 if ($context['user']['is_guest'])
 {
@@ -26,8 +32,7 @@ if ($context['user']['is_guest'])
 }
 else
 {
-  switch (empty($_POST['submittype'])? $_GET['action'] : $_POST['submittype'])
-  {
+  switch (key_or($_POST, 'submittype', key_or($_GET, 'action', ''))) {
     case 'blog':
         if (empty($_POST['text'])) {
           echo "<h1>Error</h1>\nBlog contained no text.";
@@ -91,103 +96,7 @@ else
         echo "<h3>Your blog has been updated.</h3>\n";
         echo "You should be redirected to <a href=\"blogs.php?action=comments&blog=" . $blog_id . "\">your new blog</a> shortly.";
       break;
-    case 'game':
-        echo "<i>Sorry!</i> The EDC is <i>still</i> down while we move to cloud storage. This is a painful process requiring work with third-party APIs.<br/><br/><br/><pre>";
-        print_r($_POST);
-	echo "<br /><br />";
-	print_r($_FILES);
-        $thumbfn = '';
-        if ($_POST['thumbsrc'] === 'custom') {
-          var_dump($_FILES);
-          $screen_no = 0;
-          if (array_key_exists('screenf_' . $screen_no, $_FILES))
-            $thumbfn = $_FILES['screenf_' . $screen_no]['tmp_name'];
-            if (empty($thumbfn))
-              $thumbfn = '';
-            
-            $outname = '/var/www/html/enigma-dev.org/edc/scrtest/tthump.png';
-            
-            // $imgmc = 'convert -composite "' . $thumbfn . '"' . "'[154x96!]'" . ' images/frames/frame1.png "' . $outname . '"';
-            // echo($imgmc);
-            
-            // echo system($imgmc);
-            // echo '<br/><img src="tthump.png" />';
-            
-            $desw = 154;
-            $desh = 96;
-            $x = intval($_POST['crop_x']);
-            $y = intval($_POST['crop_y']);
-            $w = intval($_POST['crop_w']);
-            $h = intval($_POST['crop_h']);
-            if ($w < $desw) $w = $desw;
-            if ($h < $desh)  $h = $desh;
-            $imm = new Imagick($thumbfn);
-            echo 'all good<br/>';
-            $imm->cropImage($w, $h, $x, $y);
-            $imm->scaleImage(154, 96);
-            echo 'keeping on<br/>';
-            if (strtolower($_POST['thumb_frameid']) !== 'none')
-              $imm->compositeImage(new Imagick('images/frames/frame' . intval($_POST['thumb_frameid']) . '.png'), imagick::COMPOSITE_ATOP, 0, 0);
-            echo 'final stretch<br />';
-            try {
-              $imm->writeImage($outname);
-              echo 'still ok<br/>';
-            }
-            catch (Exception $e) {
-              echo $e;
-            }
-            
-            echo '<br /><img src="scrtest/tthump.png" alt="Crap." />';
-        }
-        echo "</pre>";
-        
-        
-        
-        die();
-        if (empty($_POST['dllink'])) {
-          echo "<h1>Error</h1>\nNowhere to download!";
-          return;
-        }
-        $type = ($_POST['type'] == 'game' ? 'Game' : 'Example');
-        if (empty($_POST['name'])) {
-          echo "<h1>Error</h1>\n" . $type . " must have a title.";
-          return;
-        }
-        if (empty($_POST['description'])) {
-          echo "<h1>Error</h1>\nPlease enter at least a brief description of your " . strtolower($type) . ".";
-          return;
-        }
-        $image = $_POST['thumb'];
-        if (empty($image) || $image == "http://")
-          $image = "images/default.gif";
-        $genre = $_POST['genre'];
-        if (empty($genre))
-          $genre = "";
-        $wip = $_POST['wip'] === 'true' ? 1 : 0;
-        
-        // Make a new thread for this game
-        $smcFunc['db_select_db']($db_name);
-        $smcFunc['db_insert']('insert', 'edc_threads',
-                  array('id_author' => 'int'),
-                  array($context['user']['id']), 
-                  array());
-        $thread_id = $smcFunc['db_insert_id']('edc_threads', 'id_thread');
-        
-        // Insert the game
-        $smcFunc['db_insert']('insert', 'edc_games',
-                  array('id_author' => 'int', 'id_thread'=>'int', 'name' => 'string', 
-                        'text'=>'string', 'image'=>'string', 'type'=>'string', 'wip'=>'int', 'genre'=>'string',
-                        'dllink'=>'string'),
-        	        array($context['user']['id'], $thread_id, $_POST['name'],  
-                        $_POST['description'],  $image, $type, $wip, $genre,
-                        $_POST['dllink']), 
-        	        array());
-        $game_id = $smcFunc['db_insert_id']('edc_games', 'id_game');
-        echo "<meta http-equiv=\"REFRESH\" content=\"0;url=games.php?game=" . $game_id . "\">";
-        echo "<h3>Your game has been posted.</h3>\n";
-        echo "You should be redirected to <a href=\"games.php?game=" . $game_id . "\">your game</a> shortly.";
-      break;
-  case 'delblog':
+    case 'delblog':
         $blog_id = $_GET['blog'];
         if (empty($blog_id)) {
           echo "<h1>Error: No blog selected.</h1>";
@@ -212,6 +121,171 @@ else
         echo "<meta http-equiv=\"REFRESH\" content=\"0;url=blogs.php?u=" . $selblog['author'] . "\">";
         echo "<h3>Your blog has been deleted.</h3>\n";
         echo "You should be redirected to <a href=\"blogs.php?u=" . $selblog['author'] . "\">the blog page</a> shortly.";
+      break;
+    case 'game':
+        $type = ($_POST['type'] == 'game' ? 'Game' : 'Example');
+        if (empty($_POST['name']) || !strlen(trim($_POST['name']))) {
+          echo "<h1>Error</h1>\n" . $type . " must have a title.";
+          return;
+        }
+        $game_name = $_POST['name'];
+        if (empty($_POST['description'])) {
+          echo "<h1>Error</h1>\nPlease enter at least a brief description of your " . strtolower($type) . ".";
+          return;
+        }
+        $game_description = $_POST['description'];
+        // print_r($_POST); echo "<br /><br />"; print_r($_FILES);
+        
+        // Prepare files for cloud upload
+        $files = Array();
+        for ($file_no = 0; $file_no < 100; ++$file_no) {
+          $file_key = 'dlfile_' . $file_no;
+          $url_key  = 'dllink_' . $file_no;
+          $name_key = 'dlname_' . $file_no;
+          $game_fname = stage_file_or_url($file_key, $url_key, 'file', $file_no);
+          $game_vname = key_or($_POST, $name_key, NULL);
+
+          if ($game_fname === NULL) break;
+          if (!empty($game_fname['local'])) {
+            if (empty($game_vname)) {
+              echo "<h1>Error</h1> You supplied " . htmlspecialchars($game_fname['user']) .
+                   " but forgot to specify a name for the download (to help users choose the right version).";
+              return;
+            }
+            $files[$file_no] = Array(
+              'name' => $game_vname,
+              'file' => $game_fname['local'],
+              'user-fname' => $game_fname['user'],
+            );
+          }
+        }
+
+        if (empty($files)) {
+          echo "<h1>Error</h1> You must provide at least one download file.";
+          return;
+        }
+
+        // Prepare screenshots for cloud upload
+        $screens = Array();
+        for ($screen_no = 0; $screen_no < 100; ++$screen_no) {
+          $file_key = 'screenf_' . $screen_no;
+          $url_key = 'screenu_' . $screen_no;
+          $screen_fname = stage_file_or_url($file_key, $url_key, 'screenshot', $screen_no);
+          if ($screen_fname === NULL) break;
+          if (!empty($screen_fname['local'])) {
+            $screens[$screen_no] = $screen_fname['local'];
+          }
+        }
+
+        $thumbnail = tempnam(sys_get_temp_dir(), 'edc');
+        $thumbsrc = key_or($_POST, 'thumbsrc', NULL);
+        if ($thumbsrc === 'custom') {
+          $screen_no = intval($_POST['thumbsrc_screen']);
+          if (!array_key_exists($screen_no, $screens)) {
+            echo "<h1>Error</h1> Failed to generate thumbnail: selected source screenshot (' . $screen_no . ') not provided!";
+            return;
+          }
+          $thumbin = $screens[$screen_no];
+          $frame_selection = (strtolower($_POST['thumb_frameid']) !== 'none') ?
+              intval($_POST['thumb_frameid']) : NULL;
+          if (!generate_game_thumbnail($thumbin, $frame_selection,
+                                       intval($_POST['crop_x']), intval($_POST['crop_y']),
+                                       intval($_POST['crop_w']), intval($_POST['crop_h']),
+                                       $thumbnail)) {
+            echo '<h1>Error</h1> Failed to generate game thumbnail. Was the screenshot a valid image?';
+            return;
+          }
+          echo '<br /><img src="scrtest/tthump.png" alt="Crap." /><br/><br/>';
+        }
+
+        elseif ($thumbsrc === 'generated') {
+          $thumbin = NULL;
+          foreach ($screens as $unused => $thumbin) break;
+          if (empty($thumbin)) {
+            echo "<h1>Error</h1> I can't generate a thumbnail for you without a screenshot. " .
+                 "Also, have you considered using the editor?";
+            return;
+          }
+          if (!generate_game_thumbnail_gross($thumbin, $thumbnail)) {
+            echo '<h1>Error</h1> Failed to generate game thumbnail. Was the screenshot a valid image?';
+            return;
+          }
+          echo '<br /><img src="scrtest/tthump.png" alt="Crap." /><br/><br/>';
+        }
+
+        elseif ($thumbsrc === 'upload') {
+          $thumbin = key_or(key_or($_FILES, 'thumbfile', NULL), 'tmp_name', NULL);
+          if (empty($thumbin)) {
+            echo "<h1>Error</h1> No thumbnail image provided!";
+            return;
+          }
+          if (!validate_game_thumbnail($thumbin, $thumbnail)) {
+            echo "<h1>Error</h1> Provided thumbnail is not a valid image...";
+            return;
+          }
+          echo '<br /><img src="scrtest/tthump.png" alt="Crap." /><br/><br/>';
+        }
+
+        else {
+          echo "<h1>Error</h1> No thumbnail selected!";
+          return;
+        }
+
+        $genre = key_or($_POST, 'genre', '');
+        if (empty($genre))
+          $genre = "";
+        $wip = key_or($_POST, 'wip', 'false') === 'true' ? 1 : 0;
+
+        // if ($context['user']['name'] != "Josh @ Dreamland") {
+        //   die("<h1>Hey!</h1> Finishing touches! Try again shortly.<br/><br/><br/>");
+        // }
+	// upload_game_data(123, $thumbnail, $screens, $files); die();
+
+        // Make a new thread for this game
+        $smcFunc['db_select_db']($db_name);
+        $smcFunc['db_insert']('insert', 'edc_threads',
+                  array('id_author' => 'int'),
+                  array($context['user']['id']), 
+                  array());
+        $thread_id = $smcFunc['db_insert_id']('edc_threads', 'id_thread');
+        
+        // Use a placeholder thumbnail until we finish the cloud upload.
+        $ph_thumbnail = 'enigma-dev.org/edc/images/default.gif';
+        
+        // Insert the game
+        $smcFunc['db_insert']('insert', 'edc_games',
+                  array('id_author' => 'int', 'id_thread'=>'int', 'name' => 'string',
+                        'text'=>'string', 'image'=>'string', 'type'=>'string',
+                        'wip'=>'int', 'genre'=>'string'),
+                  array($context['user']['id'], $thread_id, $game_name,
+                        $game_description, $ph_thumbnail, $type, $wip, $genre),
+                  array());
+        $game_id = $smcFunc['db_insert_id']('edc_games', 'id_game');
+        
+        // Upload all game data to cloud.
+        $stat = upload_game_data($game_id, $thumbnail, $screens, $files);
+        
+        // Print any errors
+        foreach ($stat['errors'] as $error) {
+          echo '<div class="edc-error">' . htmlspecialchars($error) . '</div>';
+        }
+        if (empty($stat['successful'])) {
+          echo '<div class="edc-notice">All uploads seem to have failed. Is it foggy outside? Perhaps the cloud is down.<br/>' .
+               'Your game has been saved without this information; you may edit it and upload these files later.</div>';
+        } else foreach ($stat['successful'] as $file) {
+          echo '<div class="edc-success">Successfully uploaded ' . htmlspecialchars($file) . '.</div>';
+        }
+        $thumbnail = $stat['thumbnail-url'];
+        
+        // Finish the game upload
+        $smcFunc['db_query']('',
+                  'UPDATE edc_games SET image={string:thumb}, uploading=0 ' .
+                  'WHERE id_game={int:tid}',
+                  array('tid' => $game_id, 'thumb' => $thumbnail));
+
+        echo "<meta http-equiv=\"REFRESH\" content=\"0;url=games.php?game=" . $game_id . "\">";
+        echo "<h3>Your game has been posted.</h3>\n";
+        echo "You should be redirected to <a href=\"games.php?game=" . $game_id . "\">your game</a> shortly.";
       break;
   case 'delgame':
         $game_id = $_GET['game'];
@@ -242,7 +316,7 @@ else
     case 'editgame':
         $game_id = $_POST['game_id'];
         if (empty($game_id)) {
-          echo "<h1>Error: No game selected.</h1>";
+          echo "<h1>Error: No game selected.</h1> How did you even submit this form...?";
           return false;
         }
         
@@ -258,7 +332,9 @@ else
           return;
         }
         
-        die("Submit form will be implemented before edit form.");
+        die("<h1>Sorry...</h1> As big a pain in the ass as the submit form was, "  .
+            "this edit form is going to be a bigger one. I'm not doing it today. " .
+            "ask me on Discord to implement it or to edit your game for you.");
         if (empty($_POST['dllink'])) {
           echo "<h1>Error</h1>\nNowhere to download!";
           return;

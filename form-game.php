@@ -15,30 +15,64 @@
  * this code. If not, see <http://www.gnu.org/licenses/>.
 */
 
+function print_game_row($i, $dn, $dl, $ph) {
+   if (empty($ph)) $ph = 'URL to upload, instead of file';
+   echo '
+      <tr>
+        <td rowspan="2">
+          <input type="text" id="idln_' . $i . '" name="dlname_' . $i . '" value="' . htmlspecialchars($dn) . '" class="gamecatinput" placeholder="Enter a name" />
+        </td><td colspan="2">
+          <input type="text" id="idll_' . $i . '" name="dllink_' . $i . '" value="' . htmlspecialchars($dl) . '" class="gameurlinput" placeholder="' . $ph . '" />
+        </td>
+      </tr><tr>
+        <td colspan="2">
+          <input type="file" id="idlf_' . $i . '" name="dlfile_' . $i . '" class="gamefileinput" />
+        </td>
+      </tr>';
+}
+
+function print_screenshot_row($i, $url, $ph) {
+  if (empty($ph)) $ph = 'URL to upload for screenshot ' . $i . ' (instead of file)';
+  echo '
+      <tr>
+        <td colspan="3"><input type="text" id="scru_' . $i . '" name="screenu_' . $i . '" value="' . htmlspecialchars($url) . '" placeholder="' . $ph . '" class="screenurlinput" /></td>
+      </tr><tr>
+        <td colspan="3"><input type="file" id="scrf_' . $i . '" name="screenf_' . $i . '" class="screenfileinput" /></td>
+      </tr>';
+}
+
   function print_game_form($gameName = "", $gameGenre = "", $gameDesc = "", $isGame = "", $isWIP = "", $gameImage = "", $dlNames = array(), $dlLinks = array(), $screens = array())
   {
     echo '
     <style type="text/css">
-      #submittable td { vertical-align: middle; }
-      #submittable tr { line-height: 24px; }
-      #submittable .info { line-height: normal; font-style: italic; font-size: smaller; }
-      #submittable .extinfo { line-height: normal; font-style: italic; font-size: smaller; color: #9AD; }
-      #submittable .fgroup { font-size: larger; font-weight: bold; }
-      #submittable .sized { width: 200px; }
+      #submittable td { vertical-align: middle; padding: 0 3px; }
+      #submittable .info { line-height: normal; font-style: italic; font-size: smaller; vertical-align: text-top; margin-left: 3px; }
+      #submittable .extinfo { line-height: normal; font-style: italic; font-size: smaller; color: #9AD; padding: 4px 3px 8px 3px; }
+      #submittable .fgroup { font-size: larger; font-weight: bold; margin-top: 8px; margin-bottom: 3px; display: inline-block; }
+      #submittable .sized { width: 256px; margin-bottom: 4px; }
       #submittable .bigsized { width: 448px; }
       #submittable .radiopt { font-size: small; }
       #submittable .dead { color: #AAA; }
       #submittable .gamecatinput    { width: 96px;  }
-      #submittable .gameurlinput    { width: 246px; }
-      #submittable .gamefileinput   { width: 178px; }
-      #submittable .screenurlinput  { width: 353px; }
-      #submittable .screenfileinput { width: 178px; }
-      #submittable .thumbulinput {
-          border: 1px solid #ABC;
-          border-radius: 6px 6px 6px 6px;
-          width: 412px;
+      #submittable .gameurlinput    { width: 100%; box-sizing: border-box; margin-top:    5px; }
+      #submittable .gamefileinput   { width: 100%; box-sizing: border-box; margin-bottom: 2px; }
+      #submittable .screenurlinput  { width: 100%; box-sizing: border-box; margin-top:    3px; }
+      #submittable .screenfileinput { width: 100%; box-sizing: border-box; margin-bottom: 4px; }
+      #submittable .thumbulbox {
+        width: calc(100% - 32px);
+        box-sizing: border-box;
+        display: inline-block;
+        vertical-align: middle;
+        padding-left: 4px;
+        margin-bottom: 8px;
       }
-      #submittable .thumbulbox { text-align: right; padding-right: 3px; }
+      #submittable .thumbulinput {
+        border: 1px solid #E6EFF2;
+        border-radius: 5px;
+        margin-top: 1px;
+        width: 100%;
+        box-sizing: border-box;
+      }
       #submittable #screenbox { width: 200px; }
     </style>
     <table columns="3" id="submittable">
@@ -79,10 +113,10 @@
       <tr><td colspan="3"><span class="fgroup">Download Versions:</span> <span class="info">(You must upload at least one game file)</span></td></tr>
       <tr><td colspan="3" class="extinfo">Enter a URL to upload from, or click "Browse" to choose a file from your computer.<br/>
           Leave the field as a filename to keep the currently uploaded file. Blank lines will be removed!</td></tr>
-      <tr><td>Version</td><td colspan="2">File <span class="info">(Name on server, new URL, or new local file)</span></td></tr>
+      <tr><td><b>Version</b></td><td colspan="2"><b>File</b> <span class="info">(Name on server, new URL, or new local file)</span></td></tr>
       ';
       $num = 5;
-      $defaults = array("Web", "OS X", "Linux", "Windows", "Source");
+      $defaults = array("", "OS X", "Linux", "Windows", "Source");
       for ($i = 0; $num > 0; ++$i) {
         if (array_key_exists($i, $dlLinks)) {
           $dn = $dlNames[$i];
@@ -91,23 +125,28 @@
         } else {
           $dn = $defaults[--$num];
           $dl = '';
-          $up = 'URL to upload, instead of file';
+          $up = '';
         }
-        echo '
-      <tr>
-        <td><input type="text" id="idln_' . $i . '" name="dlname_' . $i . '" value="' . htmlspecialchars($dn) . '" class="gamecatinput" placeholder="' . $dn . '" /></td>
-        <td><input type="text" id="idll_' . $i . '" name="dllink_' . $i . '" value="' . htmlspecialchars($dl) . '" class="gameurlinput" placeholder="' . $up . '" /></td>
-        <td><input type="file" id="idlf_' . $i . '" name="dllink_' . $i . '" value="' . htmlspecialchars($dl) . '" class="gamefileinput" /></td>
-      </tr>';
+        print_game_row($i, $dn, $dl, $up);
       }
       $orig_num_games = $i;
       
       // Allow adding more files with JavaScript
       echo '
+      <tr id="addfileinputshere" style="display:none"><td colspan="3"></td></tr>
       <tr id="addmorefiles_tr" style="display: none">
         <td colspan="3" style="text-align: right;">
-          <div id="addfileinputshere" style="display: none"></div>
-          <button type="button" onclick="add_file(' . $orig_num_games . ')">Add another file</button>
+          <script type="text/javascript">
+            let num_files = ' . $orig_num_games . ';
+            function add_file() {
+              let ins = document.getElementById("addfileinputshere");
+              ins.outerHTML = `';
+      print_game_row('${num_files}', '', '', '');
+      echo '` + ins.outerHTML;
+              ++num_files;
+            }
+          </script>
+          <button type="button" onclick="add_file()">Add another file</button>
         </td>
       </tr>';
       
@@ -117,23 +156,35 @@
       $num = 5;
       for ($i = 0; $num > 0; ++$i) {
         $url = '';
-        if (array_key_exists($i, $screens)) $url = $screens[$i];
-        else $num--;
-        echo '
-      <tr>
-        <td colspan="2"><input type="text" id="scru_' . $i . '" name="screenu_' . $i . '" value="' . htmlspecialchars($url) . '" class="screenurlinput" /></td>
-        <td colspan="1"><input type="file" id="scrf_' . $i . '" name="screenf_' . $i . '" value="' . htmlspecialchars($url) . '" class="screenfileinput" /></td>
-      </tr>';
+        $ph = '';
+        if (array_key_exists($i, $screens)) {
+          $url = $screens[$i];
+          $ph = 'Delete screenshot ' . $i;
+        } else $num--;
+        print_screenshot_row($i, $url, $ph);
       }
       
       $orig_num_screens = $i;
       
       // Allow adding more files with JavaScript
       echo '
+      <tr id="addscreeninputshere" style="display:none"><td colspan="3"></td></tr>
       <tr id="addmorescreens_tr" style="display: none">
         <td colspan="3" style="text-align: right;">
-          <div id="addscreeninputshere" style="display: none"></div>
-          <button type="button" onclick="add_screen(' . $orig_num_screens . ')">More screenshots</button>
+          <script type="text/javascript">
+            let num_screens = ' . $orig_num_screens . ';
+            function add_screen() {
+              let ins = document.getElementById("addscreeninputshere");
+              ins.outerHTML = `';
+      print_screenshot_row('${num_screens}', '', '');
+      echo '` + ins.outerHTML;
+              ++num_screens;
+            }
+            function add_screens(x) {
+              for (let i = 0; i < x; ++i) add_screen();
+            }
+          </script>
+          <button type="button" onclick="add_screens(3)">More screenshots</button>
         </td>
       </tr>';
       
@@ -143,7 +194,6 @@
       echo '
       <tr>
         <td colspan="3"><span class="fgroup">Thumbnail:</td>
-        <!-- td colspan="2"><input type="text" name="thumb" value="' . htmlspecialchars($gameImage) . '" style="width:320px" /></td -->
       </tr>
       <tr>
         <td colspan="3" class="extinfo">
@@ -152,12 +202,17 @@
         from a screenshot, but keep in mind that this image is NOT itself a screenshot!
        	</td>
       </tr>
-      <tr><td rowspan="3">Source</td>
-          <td colspan="2" class="radiopt"><label><input type="radio" name="thumbsrc" value="upload" />                     I have a 154x96 image I would like to use! </label>
-          <div class="thumbulbox"><input type="file" name="thumburl" class="thumbulinput" /></td></tr>
-      <tr><td colspan="2" class="radiopt"><label><input type="radio" name="thumbsrc" value="custom" id="rdes" disabled />  <span id="designradio" class="dead">I would like to design one here <span class="info">(Requires JavaScript)</span></span></label>
-          <select id="screenbox" style="width: 200px; margin-left: 24px;"></select><input type="hidden" name="thumb_frameid" id="thumbframe" /></td></tr>
-      <tr><td colspan="2" class="radiopt"><label><input type="radio" name="thumbsrc" value="generated" />                  Generate image by resizing my first screenshot</label></td></tr>
+      <tr><td rowspan="3" style="text-align: center">Source</td>
+          <td colspan="2" class="radiopt"><label><input type="radio" name="thumbsrc" value="upload" />
+          <div class="thumbulbox">I have a 154x96 image I would like to use!
+          <input type="file" name="thumbfile" class="thumbulinput" /></div></label></td></tr>
+      <tr><td colspan="2" class="radiopt"><label><input type="radio" name="thumbsrc" value="custom" id="rdes" disabled />
+          <div class="thumbulbox">
+          <span id="designradio" class="dead">I would like to design one here <span class="info">(Requires JavaScript)</span></span>
+          <select id="screenbox" name="thumbsrc_screen" style="width: 100%; box-sizing: border-box;"></select>
+          <input type="hidden" name="thumb_frameid" id="thumbframe" value="1" /></div></label></td></tr>
+      <tr><td colspan="2" class="radiopt"><label><input type="radio" name="thumbsrc" value="generated" />
+          <div class="thumbulbox">Generate image by resizing my first screenshot<br/>(This will be ugly and you should feel bad for picking it.)</div></label></td></tr>
       ';
       
       echo '
@@ -178,9 +233,6 @@
 
 
 <script type="text/javascript">
-var num_games = 0;
-var num_screens = 0;
-
 function unblock(numgames, numscreens) {
   num_games = numgames;
   num_screens = numscreens;
@@ -192,8 +244,8 @@ function unblock(numgames, numscreens) {
   r = document.getElementById("rdes");
   if (r == null) return 1;
   r.disabled = false;
-  if (r.checked) showDesigner();
-  $('#rdes').change(showDesigner);
+  showDesigner();
+  $("input[name='thumbsrc']").change(showDesigner);
   r = document.getElementById("designradio");
   if (r != null) r.className = "";
   r.innerHTML = "I would like to design one from a screenshot";
@@ -218,33 +270,11 @@ function add_generic(type, cur_num, orig_num, add_num, ids, ins) {
   return cur_num;
 }
 
-function add_file(orig_num) {
-  function ins(id) {
-    return '\
-    <tr>\
-      <td><input type="text" id="idln_' + id + '" name="dlname_' + id + '" class="gamecatinput"  /></td>\
-      <td><input type="text" id="idll_' + id + '" name="dllink_' + id + '" class="gameurlinput"  /></td>\
-      <td><input type="file" id="idlf_' + id + '" name="dllink_' + id + '" class="gamefileinput" /></td>\
-    </tr>';
-  }
-  num_games = add_generic('file', num_games, orig_num, 1, ['idln_', 'idll_', 'idlf_'], ins);
-}
-
-function add_screen(orig_num) {
-  function ins(id) {
-    return '\
-    <tr>\
-      <td colspan="2"><input type="text" id="scru_' + id + '" name="screenu_' + id + '" class="screenurlinput"  /></td>\
-      <td colspan="1"><input type="file" id="scrf_' + id + '" name="screenf_' + id + '" class="screenfileinput" /></td>\
-    </tr>';
-  }
-  num_screens = add_generic('screen', num_screens, orig_num, 3, ['scru_', 'scrf_'], ins);
-}
-
 var usable_screens = [];
 function showDesigner() {
+  var r = document.getElementById("rdes");
   var a = document.getElementById("designer");
-  a.style.display = null;
+  a.style.display = r.checked ? null : 'none';
   find_usable_screens();
   update_combobox();
   start_designer();
@@ -301,6 +331,7 @@ var oFReader = new FileReader(), rFilter =
 
 oFReader.onload = function (oFREvent) {
   imagedisplay.src = oFREvent.target.result;
+  rebind_cropper(imagedisplay.src);
 };
 
 function loadImageFile(id_fileinput) {
@@ -317,9 +348,16 @@ function update_image(sel) {
   imagedisplay = document.getElementById("photo");
   if (isfile) {
     loadImageFile(sid);
-  }
-  else
+  } else {
     imagedisplay.src = document.getElementById(sid).value;
+    if (imagedisplay.src.indexOf('dropbox') >= 0) {
+      alert("Dropbox Team has spent a lot of time and effort making sure "  +
+            "your browser can't display images from its hosting platform. " +
+            "Please choose an image from a proper image hosting platform (" +
+            "or from your own computer) in order to use this functionality.");
+    }
+    rebind_cropper(imagedisplay.src);
+  }
 }
 
 </script>

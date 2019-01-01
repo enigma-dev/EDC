@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2013 Josh Ventura <JoshV10@gmail.com>
+/* Copyright (C) 2011-2018 Josh Ventura <JoshV10@gmail.com>
  *
  * This file is part of the ENIGMA Developers Community (EDC).
  *
@@ -23,7 +23,7 @@ function print_designer_form($game_form_result) {
     <div class="edctitlebar">Thumbnail Editor</div>
     <br />
     ';
-    include('imgareaselect.php');
+    include('croppie.php');
     echo '
     <br/>
     <style type="text/css">
@@ -37,7 +37,9 @@ function print_designer_form($game_form_result) {
     <br/>
     ';
     for ($i = 0; $i < 3; ++$i) echo '
-    <div class="frameradio"><label><input type="radio" name="frameradio" value="' . $i . '" ' . ($i == 1? 'selected' : '') . ' onchange="updateselframe(this)" /><img src="images/frames/frame' . $i . '.png" alt="Frame ' . ($i + 1) . '" /></label></div>';
+    <div class="frameradio"><label><input type="radio" name="frameradio" value="' . $i . '" ' .
+       ($i == 1? 'checked' : '') . ' onchange="updateselframe(this)" /><img src="images/frames/frame' . $i .
+       '.png" alt="Frame ' . ($i + 1) . '" /></label></div>';
     echo '
   </div>
   <script type="text/javascript">unblock(' . $orig_num_games . ', ' . $orig_num_screens . ');</script>';
