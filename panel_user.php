@@ -1,4 +1,4 @@
-<?
+<?php
 /* Copyright (C) 2011-2013 Josh Ventura <JoshV10@gmail.com>
  *
  * This file is part of the ENIGMA Developers Community (EDC).
@@ -16,7 +16,7 @@
 */
 ?>
 
-<div 
+<div
 class="edcpane">
   <div class="edctitlebar">User</div>
   <?php
@@ -30,7 +30,7 @@ class="edcpane">
     }
     else
     {
-      echo 
+      echo
       "    Welcome, guest!<br/>" .
       "    <a href=\"$forum_path/index.php?action=login\">Login</a><br/>" .
       "    <a href=\"$forum_path/index.php?action=register\">Register</a>";
