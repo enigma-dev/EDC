@@ -16,7 +16,7 @@
 */
 ?>
 
-<div 
+<div
 class="edcpane">
   <div class="edctitlebar">Blogs</div>
   <?php

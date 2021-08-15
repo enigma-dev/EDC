@@ -16,7 +16,7 @@
 */
 ?>
 
-<div 
+<div
 class="edcpane">
   <div class="edctitlebar">User</div>
   <?php
@@ -30,7 +30,7 @@ class="edcpane">
     }
     else
     {
-      echo 
+      echo
       "    Welcome, guest!<br/>" .
       "    <a href=\"$forum_path/index.php?action=login\">Login</a><br/>" .
       "    <a href=\"$forum_path/index.php?action=register\">Register</a>";

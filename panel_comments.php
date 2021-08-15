@@ -16,7 +16,7 @@
 */
 ?>
 
-<div 
+<div
 class="edcpane">
   <div class="edctitlebar">Comments</div>
   <script language="JavaScript" src="script/edit.js"></script>
